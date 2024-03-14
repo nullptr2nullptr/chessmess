@@ -10,7 +10,7 @@ import java.util.TreeSet;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
 
-    private ChessPiece dictator = new ChessPiece(PieceType.QUEEN,
+    private ChessPiece queen = new ChessPiece(PieceType.QUEEN,
                                         false,
                                         "src/res/image/Chess_qlt60.png",
                                         "src/res/sound/sound1.wav",
@@ -38,7 +38,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        dictator.paint(g, this);
+        queen.paint(g, this);
     }
 
     //Mouse Listener Stuff
@@ -53,8 +53,8 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
     public void mouseReleased(MouseEvent e){
-        if(dictator.isTouching(mouse_x, mouse_y)){
-            dictator.changeImg();
+        if(queen.isTouching(mouse_x, mouse_y)){
+            queen.changeImg();
         }
         repaint();
     }
@@ -86,10 +86,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         if(e.getSource() == clock){
             for(int k : keycodes){
                 if(k == 38){
-                    dictator.setX(dictator.getX() + 1);
+                    queen.setX(queen.getX() + 1);
                 }
             }
-            dictator.update(delay, width, height);
+            queen.update(delay, width, height);
         }
         repaint();
     }
