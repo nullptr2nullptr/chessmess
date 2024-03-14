@@ -10,25 +10,82 @@ import java.util.TreeSet;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
 
-    private ChessPiece queen = new ChessPiece(PieceType.QUEEN,
+    static int PIECE_WIDTH = 60;
+    private ChessPiece leftLightRook = new ChessPiece(PieceType.ROOK,
+                                        false,
+                                        "src/res/image/Chess_rlt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        0,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece leftLightKnight = new ChessPiece(PieceType.KNIGHT,
+                                        false,
+                                        "src/res/image/Chess_nlt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece leftLightBishop = new ChessPiece(PieceType.BISHOP,
+                                        false,
+                                        "src/res/image/Chess_blt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        PIECE_WIDTH*2,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece leftLightKing = new ChessPiece(PieceType.KING,
+                                        false,
+                                        "src/res/image/Chess_klt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        PIECE_WIDTH*3,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece rightLightQueen = new ChessPiece(PieceType.QUEEN,
                                         false,
                                         "src/res/image/Chess_qlt60.png",
                                         "src/res/sound/sound1.wav",
-                                        100,
-                                        100,
-                                        165,
-                                        225);
+                                        PIECE_WIDTH*4,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece rightLightBishop = new ChessPiece(PieceType.BISHOP,
+                                        false,
+                                        "src/res/image/Chess_blt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        PIECE_WIDTH*5,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece rightLightKnight = new ChessPiece(PieceType.KNIGHT,
+                                        false,
+                                        "src/res/image/Chess_nlt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        PIECE_WIDTH*6,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
+    private ChessPiece rightLightRook = new ChessPiece(PieceType.ROOK,
+                                        false,
+                                        "src/res/image/Chess_rlt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH*7,
+                                        PIECE_WIDTH,
+                                        PIECE_WIDTH);
     private Timer clock = new Timer(16, this);
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int delay, width, height;
 
-    public GameBoard(int delay, int width, int height) {
+    public GameBoard(int delay) {
         setFocusable(true);
-        this.width = width;
-        this.height = height;
+        this.width = PIECE_WIDTH * 8;
+        this.height = PIECE_WIDTH * 8;
         this.delay = delay;
-        setPreferredSize(new Dimension(width, height));
+        setPreferredSize(new Dimension(this.width, this.height));
         clock.start();
         addKeyListener(this);
         addMouseListener(this);
@@ -38,7 +95,14 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        queen.paint(g, this);
+        leftLightRook.paint(g, this);
+        leftLightKnight.paint(g, this);
+        leftLightBishop.paint(g, this);
+        leftLightKing.paint(g, this);
+        rightLightQueen.paint(g, this);
+        rightLightBishop.paint(g, this);
+        rightLightKnight.paint(g, this);
+        rightLightRook.paint(g, this);
     }
 
     //Mouse Listener Stuff
@@ -53,9 +117,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
     public void mouseReleased(MouseEvent e){
-        if(queen.isTouching(mouse_x, mouse_y)){
-            queen.changeImg();
-        }
         repaint();
     }
 
@@ -84,12 +145,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     //Action Listener Stuff
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == clock){
-            for(int k : keycodes){
-                if(k == 38){
-                    queen.setX(queen.getX() + 1);
-                }
-            }
-            queen.update(delay, width, height);
+            // TODO
         }
         repaint();
     }
