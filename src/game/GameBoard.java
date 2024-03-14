@@ -1,17 +1,29 @@
+package game;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import pieces.ChessPiece;
+import pieces.PieceType;
+
 import java.util.TreeSet;
 
-public class Panel extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
+public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
 
-    private Asset dictator = new Asset("src/res/image/example.jpg", "src/res/image/example_2.jpg", 100, 100, 165, 225);
+    private ChessPiece dictator = new ChessPiece(PieceType.QUEEN,
+                                        false,
+                                        "src/res/image/Chess_qlt60.png",
+                                        "src/res/sound/sound1.wav",
+                                        100,
+                                        100,
+                                        165,
+                                        225);
     private Timer clock = new Timer(16, this);
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int delay, width, height;
 
-    public Panel(int delay, int width, int height) {
+    public GameBoard(int delay, int width, int height) {
         setFocusable(true);
         this.width = width;
         this.height = height;

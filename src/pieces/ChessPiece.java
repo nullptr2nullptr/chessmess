@@ -1,5 +1,16 @@
 package pieces;
 
+import java.io.File;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.swing.ImageIcon;
+
+import game.GameBoard;
+
+import java.awt.*;
+
 public class ChessPiece {
     static int UP = 1 >> 1;
     static int RIGHT = 1 >> 2;
@@ -25,9 +36,20 @@ public class ChessPiece {
 
     PieceType type;
     int moveSet;
+    ImageIcon icon;
+    int x, y, width, height;
+    double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
+    String moveFile;
 
-    public ChessPiece(PieceType type, boolean isInverted) {
+    public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, int x, int y, int width, int height) {
         this.type = type;
+        this.icon = new ImageIcon(iconPath);
+        this.moveFile = moveFile;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+
         switch (type) {
             case ROOK:
                 this.moveSet = ROOK_MOVES;
@@ -59,5 +81,56 @@ public class ChessPiece {
 
     public boolean isInverted() {
         return (this.moveSet & 0b00000000000000001111111111111111) == this.moveSet;
+    }
+
+    public void paint(Graphics g, GameBoard p){
+        g.drawImage(this.icon.getImage(), x, y, width, height, p);
+    }
+
+    public void setX(int x){
+        this.x = x;
+    }
+
+    public int getX(){
+        return x;
+    }
+
+    public boolean isTouching(int mouse_x, int mouse_y){
+        return x <= mouse_x && mouse_x <= (x + width) && y <= mouse_y && mouse_y <= (y + height);
+    }
+
+    public void changeImg(){
+        try{
+            AudioInputStream s = AudioSystem.getAudioInputStream(new File(this.moveFile));
+            Clip c = AudioSystem.getClip();
+            c.open(s);
+            c.start();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void update(int delay, int width, int height){
+        //Note delay is 16 ms
+        y += v_y * delay;
+        x += v_x * delay;
+        v_y += a_y * delay;
+        v_x += a_x * delay;
+
+        if(x <= 0){
+            v_x = -1 * v_x;
+            x = 0;
+        }else if((x + this.width) >= width){
+            v_x = -1 * v_x;
+            x = width - this.width;
+        }
+        if(y <= 0){
+            v_y = -1 * v_y;
+            y = 0;
+        }else if((y + this.height) >= height){
+            v_y = -1 * v_y;
+            y = height - this.height;
+        }
     }
 }
