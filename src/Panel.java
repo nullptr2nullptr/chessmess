@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 public class Panel extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
 
-    private Asset dictator = new Asset("src/img src/example.jpg", "src/img src/example_2.jpg", 100, 100, 165, 225);
+    private Asset dictator = new Asset("src/res/image/example.jpg", "src/res/image/example_2.jpg", 100, 100, 165, 225);
     private Timer clock = new Timer(16, this);
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;

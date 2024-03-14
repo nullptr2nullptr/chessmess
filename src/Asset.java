@@ -43,7 +43,7 @@ public class Asset {
             option = img1;
         }
         try{
-            AudioInputStream s = AudioSystem.getAudioInputStream(new File("src/sfx src/sound1.wav"));
+            AudioInputStream s = AudioSystem.getAudioInputStream(new File("src/res/sound/sound1.wav"));
             Clip c = AudioSystem.getClip();
             c.open(s);
             c.start();
