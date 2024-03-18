@@ -6,79 +6,18 @@ import javax.swing.*;
 import pieces.ChessPiece;
 import pieces.PieceType;
 
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
 
     static int PIECE_WIDTH = 60;
-    private ChessPiece leftLightRook = new ChessPiece(PieceType.ROOK,
-                                        false,
-                                        "src/res/image/Chess_rlt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        0,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece leftLightKnight = new ChessPiece(PieceType.KNIGHT,
-                                        false,
-                                        "src/res/image/Chess_nlt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece leftLightBishop = new ChessPiece(PieceType.BISHOP,
-                                        false,
-                                        "src/res/image/Chess_blt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH*2,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece leftLightKing = new ChessPiece(PieceType.KING,
-                                        false,
-                                        "src/res/image/Chess_klt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH*3,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece rightLightQueen = new ChessPiece(PieceType.QUEEN,
-                                        false,
-                                        "src/res/image/Chess_qlt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH*4,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece rightLightBishop = new ChessPiece(PieceType.BISHOP,
-                                        false,
-                                        "src/res/image/Chess_blt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH*5,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece rightLightKnight = new ChessPiece(PieceType.KNIGHT,
-                                        false,
-                                        "src/res/image/Chess_nlt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH*6,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
-    private ChessPiece rightLightRook = new ChessPiece(PieceType.ROOK,
-                                        false,
-                                        "src/res/image/Chess_rlt60.png",
-                                        "src/res/sound/sound1.wav",
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH*7,
-                                        PIECE_WIDTH,
-                                        PIECE_WIDTH);
+    private ArrayList<ChessPiece> pieces = new ArrayList<>();
     private Timer clock = new Timer(16, this);
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int delay, width, height;
+    private String MOVE_SOUND_FILE = "src/res/sound/sound1.wav";
 
     public GameBoard(int delay) {
         setFocusable(true);
@@ -90,19 +29,151 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
+
+        addBottomLtPieces();
+        addTopDkPieces();
+    }
+
+    private void addBottomLtPieces() {
+        pieces.add(new ChessPiece(PieceType.ROOK,
+            false,
+            "src/res/image/Chess_rlt60.png",
+            MOVE_SOUND_FILE,
+            0,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.KNIGHT,
+            false,
+            "src/res/image/Chess_nlt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.BISHOP,
+            false,
+            "src/res/image/Chess_blt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*2,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.KING,
+            false,
+            "src/res/image/Chess_klt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*3,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.QUEEN,
+            false,
+            "src/res/image/Chess_qlt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*4,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.BISHOP,
+            false,
+            "src/res/image/Chess_blt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*5,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.KNIGHT,
+            false,
+            "src/res/image/Chess_nlt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*6,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.ROOK,
+            false,
+            "src/res/image/Chess_rlt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH*7,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+    }
+
+    private void addTopDkPieces() {
+        pieces.add(new ChessPiece(PieceType.ROOK,
+            false,
+            "src/res/image/Chess_rdt60.png",
+            MOVE_SOUND_FILE,
+            0,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.KNIGHT,
+            false,
+            "src/res/image/Chess_ndt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.BISHOP,
+            false,
+            "src/res/image/Chess_bdt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*2,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.KING,
+            false,
+            "src/res/image/Chess_kdt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*3,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.QUEEN,
+            false,
+            "src/res/image/Chess_qdt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*4,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.BISHOP,
+            false,
+            "src/res/image/Chess_bdt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*5,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.KNIGHT,
+            false,
+            "src/res/image/Chess_ndt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*6,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
+        pieces.add(new ChessPiece(PieceType.ROOK,
+            false,
+            "src/res/image/Chess_rdt60.png",
+            MOVE_SOUND_FILE,
+            PIECE_WIDTH*7,
+            0,
+            PIECE_WIDTH,
+            PIECE_WIDTH));
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        leftLightRook.paint(g, this);
-        leftLightKnight.paint(g, this);
-        leftLightBishop.paint(g, this);
-        leftLightKing.paint(g, this);
-        rightLightQueen.paint(g, this);
-        rightLightBishop.paint(g, this);
-        rightLightKnight.paint(g, this);
-        rightLightRook.paint(g, this);
+        for (ChessPiece piece: pieces) {
+            piece.paint(g, this);
+        }
     }
 
     //Mouse Listener Stuff
