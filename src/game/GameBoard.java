@@ -10,20 +10,19 @@ import pieces.PieceType;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
-public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
+public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener {
 
     public static int PIECE_WIDTH = 60;
     private ArrayList<ChessPiece> pieces = new ArrayList<>();
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
-    private int delay, width, height;
+    private int width, height;
     private String MOVE_SOUND_FILE = "src/res/sound/sound1.wav";
 
-    public GameBoard(int delay) {
+    public GameBoard() {
         setFocusable(true);
         this.width = PIECE_WIDTH * 8;
         this.height = PIECE_WIDTH * 8;
-        this.delay = delay;
         setPreferredSize(new Dimension(this.width, this.height));
         addKeyListener(this);
         addMouseListener(this);
