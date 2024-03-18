@@ -1,6 +1,7 @@
 package pieces;
 
 import java.io.File;
+import java.util.HashMap;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -12,7 +13,7 @@ import game.GameBoard;
 import java.awt.*;
 
 public class ChessPiece {
-    static int BASE = 0b10000000000000000000000000000000;
+    static int BASE = 0b1000000000000000000000000000000;
     static int UP = BASE >> 1;
     static int RIGHT = BASE >> 2;
     static int DIAG = BASE >> 3;
@@ -42,6 +43,7 @@ public class ChessPiece {
     ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
     String moveFile;
+    boolean isDrawingDots;
 
     public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, ChessPosition pos, int width, int height) {
         this.type = type;
@@ -50,6 +52,7 @@ public class ChessPiece {
         this.pos = pos;
         this.width = width;
         this.height = height;
+        this.isDrawingDots = false;
 
         switch (type) {
             case ROOK:
@@ -88,6 +91,15 @@ public class ChessPiece {
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
+    public void preparePaint(HashMap<ChessPosition, Color> colors){
+        if (!isInverted() && isDrawingDots) {
+            colors.put(new ChessPosition(pos.x, pos.y-1), Color.BLUE);
+        } else if (isInverted() && isDrawingDots) {
+            colors.put(new ChessPosition(pos.x, pos.y+1), Color.BLUE);
+        }
+        isDrawingDots = false;
+    }
+
     public boolean isTouching(ChessPosition mouse_pos){
         return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
@@ -106,6 +118,10 @@ public class ChessPiece {
 
     public String toString() {
         return type +" at " + pos.x + "," + pos.y + " with moveset " + moveSet;
+    }
+
+    public void drawDots() {
+        this.isDrawingDots = !this.isDrawingDots;
     }
 
     public void update(int delay, int width, int height){

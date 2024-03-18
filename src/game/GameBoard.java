@@ -8,6 +8,7 @@ import pieces.ChessPosition;
 import pieces.PieceType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeSet;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener {
@@ -163,18 +164,35 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawCheckerboard(g);
+        HashMap<ChessPosition, Color> colors = new HashMap<>();
+        for (ChessPiece piece: pieces) {
+            piece.preparePaint(colors);
+        }
+        drawCheckerboard(g, colors);
         for (ChessPiece piece: pieces) {
             piece.paint(g, this);
         }
     }
 
-    private void drawCheckerboard(Graphics g) {
+    private void drawCheckerboard(Graphics g, HashMap<ChessPosition, Color> colors) {
         for (int row = 0; row < 8; row++) {
             for (int column = 0; column < 8; column++) {
+                ChessPosition p = new ChessPosition(column, row);
+                boolean ovrd = false;
+                for (ChessPosition key: colors.keySet()) {
+                    if (p.x == key.x && p.y == key.y) {
+                        g.setColor(colors.get(key));
+                        g.fillRect(column * PIECE_WIDTH, row * PIECE_WIDTH, PIECE_WIDTH, PIECE_WIDTH);
+                        ovrd = true;
+                        break;
+                    }
+                }
+                if (ovrd) {
+                    continue;
+                }
                 if ((row + column) % 2 == 0) g.setColor(new Color(240, 217, 181));
                 else g.setColor(new Color(181, 136, 99));
-                g.fillRect(column * 60, row * 60, 60, 60);
+                g.fillRect(column * PIECE_WIDTH, row * PIECE_WIDTH, PIECE_WIDTH, PIECE_WIDTH);
             }
         }
     }
@@ -197,14 +215,15 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         ChessPosition pos = new ChessPosition(mouse_x/PIECE_WIDTH, mouse_y/PIECE_WIDTH);
         for (ChessPiece p: pieces) {
             if (p.isTouching(pos)) {
-                handlePieceClick(p);
+                handlePieceClick(p, pos);
+                break;
             }
         }
         repaint();
     }
 
-    private void handlePieceClick(ChessPiece p) {
-        System.out.println(p);
+    private void handlePieceClick(ChessPiece p, ChessPosition pos) {
+        p.drawDots();
     }
 
     //Mouse Motion Listener stuff
