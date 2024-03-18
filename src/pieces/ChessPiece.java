@@ -88,6 +88,7 @@ public class ChessPiece {
     }
 
     public void paint(Graphics g, GameBoard p){
+        playSound();
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
@@ -104,7 +105,7 @@ public class ChessPiece {
         return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
 
-    public void changeImg(){
+    public void playSound(){
         try{
             AudioInputStream s = AudioSystem.getAudioInputStream(new File(this.moveFile));
             Clip c = AudioSystem.getClip();

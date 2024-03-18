@@ -18,7 +18,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
-    private String MOVE_SOUND_FILE = "src/res/sound/sound1.wav";
+    private String MOVE_SOUND_FILE = "src/res/sound/move.wav";
 
     public GameBoard() {
         setFocusable(true);
