@@ -4,6 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import pieces.ChessPiece;
+import pieces.ChessPosition;
 import pieces.PieceType;
 
 import java.util.ArrayList;
@@ -11,9 +12,8 @@ import java.util.TreeSet;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener{
 
-    static int PIECE_WIDTH = 60;
+    public static int PIECE_WIDTH = 60;
     private ArrayList<ChessPiece> pieces = new ArrayList<>();
-    private Timer clock = new Timer(16, this);
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int delay, width, height;
@@ -25,7 +25,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         this.height = PIECE_WIDTH * 8;
         this.delay = delay;
         setPreferredSize(new Dimension(this.width, this.height));
-        clock.start();
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -64,43 +63,43 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                                     PieceType.BISHOP,
                                     PieceType.KNIGHT,
                                     PieceType.ROOK},
-                                false, PIECE_WIDTH*7);
+                                false, 7);
 
-    addMostPiecesLeftToRight(new String[] {"src/res/image/Chess_pdt60.png", 
-                            "src/res/image/Chess_pdt60.png",
-                            "src/res/image/Chess_pdt60.png",
-                            "src/res/image/Chess_pdt60.png",
-                            "src/res/image/Chess_pdt60.png",
-                            "src/res/image/Chess_pdt60.png",
-                            "src/res/image/Chess_pdt60.png",
-                            "src/res/image/Chess_pdt60.png"}, 
-                            new PieceType[] {PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN},
-                            true, PIECE_WIDTH);
+        addMostPiecesLeftToRight(new String[] {"src/res/image/Chess_pdt60.png", 
+                                "src/res/image/Chess_pdt60.png",
+                                "src/res/image/Chess_pdt60.png",
+                                "src/res/image/Chess_pdt60.png",
+                                "src/res/image/Chess_pdt60.png",
+                                "src/res/image/Chess_pdt60.png",
+                                "src/res/image/Chess_pdt60.png",
+                                "src/res/image/Chess_pdt60.png"}, 
+                                new PieceType[] {PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN},
+                                true, 1);
 
-    addMostPiecesLeftToRight(new String[] {"src/res/image/Chess_plt60.png", 
-                            "src/res/image/Chess_plt60.png",
-                            "src/res/image/Chess_plt60.png",
-                            "src/res/image/Chess_plt60.png",
-                            "src/res/image/Chess_plt60.png",
-                            "src/res/image/Chess_plt60.png",
-                            "src/res/image/Chess_plt60.png",
-                            "src/res/image/Chess_plt60.png"}, 
-                            new PieceType[] {PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN,
-                                PieceType.PAWN},
-                            false, PIECE_WIDTH*6);
+        addMostPiecesLeftToRight(new String[] {"src/res/image/Chess_plt60.png", 
+                                "src/res/image/Chess_plt60.png",
+                                "src/res/image/Chess_plt60.png",
+                                "src/res/image/Chess_plt60.png",
+                                "src/res/image/Chess_plt60.png",
+                                "src/res/image/Chess_plt60.png",
+                                "src/res/image/Chess_plt60.png",
+                                "src/res/image/Chess_plt60.png"}, 
+                                new PieceType[] {PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN,
+                                    PieceType.PAWN},
+                                false, 6);
     }
 
     private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) {
@@ -108,64 +107,56 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
             isInverted,
             icons[0],
             MOVE_SOUND_FILE,
-            0,
-            row,
+            new ChessPosition(0, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[1],
             isInverted,
             icons[1],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH,
-            row,
+            new ChessPosition(1, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[2],
             isInverted,
             icons[2],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH*2,
-            row,
+            new ChessPosition(2, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[3],
             isInverted,
             icons[3],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH*3,
-            row,
+            new ChessPosition(3, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[4],
             isInverted,
             icons[4],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH*4,
-            row,
+            new ChessPosition(4, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[5],
             isInverted,
             icons[5],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH*5,
-            row,
+            new ChessPosition(5, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[6],
             isInverted,
             icons[6],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH*6,
-            row,
+            new ChessPosition(6, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[0],
+        pieces.add(new ChessPiece(types[7],
             isInverted,
             icons[7],
             MOVE_SOUND_FILE,
-            PIECE_WIDTH*7,
-            row,
+            new ChessPosition(7, row),
             PIECE_WIDTH,
             PIECE_WIDTH));
     }
@@ -202,7 +193,19 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
     public void mouseReleased(MouseEvent e){
+        mouse_x = e.getX();
+        mouse_y = e.getY();
+        ChessPosition pos = new ChessPosition(mouse_x/PIECE_WIDTH, mouse_y/PIECE_WIDTH);
+        for (ChessPiece p: pieces) {
+            if (p.isTouching(pos)) {
+                handlePieceClick(p);
+            }
+        }
         repaint();
+    }
+
+    private void handlePieceClick(ChessPiece p) {
+        System.out.println(p);
     }
 
     //Mouse Motion Listener stuff
@@ -228,12 +231,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
     //Action Listener Stuff
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == clock){
-            // TODO
-        }
-        repaint();
-    }
+    public void actionPerformed(ActionEvent e) {}
 
     //Item Listener Stuff
     public void itemStateChanged(ItemEvent e){}

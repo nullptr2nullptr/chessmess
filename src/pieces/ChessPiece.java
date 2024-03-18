@@ -37,16 +37,16 @@ public class ChessPiece {
     PieceType type;
     int moveSet;
     ImageIcon icon;
-    int x, y, width, height;
+    int width, height;
+    ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
     String moveFile;
 
-    public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, int x, int y, int width, int height) {
+    public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, ChessPosition pos, int width, int height) {
         this.type = type;
         this.icon = new ImageIcon(iconPath);
         this.moveFile = moveFile;
-        this.x = x;
-        this.y = y;
+        this.pos = pos;
         this.width = width;
         this.height = height;
 
@@ -84,19 +84,11 @@ public class ChessPiece {
     }
 
     public void paint(Graphics g, GameBoard p){
-        g.drawImage(this.icon.getImage(), x, y, width, height, p);
+        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
-    public void setX(int x){
-        this.x = x;
-    }
-
-    public int getX(){
-        return x;
-    }
-
-    public boolean isTouching(int mouse_x, int mouse_y){
-        return x <= mouse_x && mouse_x <= (x + width) && y <= mouse_y && mouse_y <= (y + height);
+    public boolean isTouching(ChessPosition mouse_pos){
+        return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
 
     public void changeImg(){
@@ -111,9 +103,13 @@ public class ChessPiece {
         }
     }
 
+    public String toString() {
+        return type +" at " + pos.x + "," + pos.y + " with moveset " + moveSet;
+    }
+
     public void update(int delay, int width, int height){
         //Note delay is 16 ms
-        y += v_y * delay;
+        /*y += v_y * delay;
         x += v_x * delay;
         v_y += a_y * delay;
         v_x += a_x * delay;
@@ -131,6 +127,6 @@ public class ChessPiece {
         }else if((y + this.height) >= height){
             v_y = -1 * v_y;
             y = height - this.height;
-        }
+        }*/
     }
 }
