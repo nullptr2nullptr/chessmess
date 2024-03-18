@@ -12,20 +12,21 @@ import game.GameBoard;
 import java.awt.*;
 
 public class ChessPiece {
-    static int UP = 1 >> 1;
-    static int RIGHT = 1 >> 2;
-    static int DIAG = 1 >> 3;
-    static int LEFT_KNIGHT = 1 >> 4;
-    static int RIGHT_KNIGHT = 1 >> 5;
-    static int DOWN = 1 >> 6;
-    static int LEFT = 1 >> 7;
-    static int DOWN_DIAG = 1 >> 8;
-    static int DOWN_LEFT_KNIGHT = 1 >> 9;
-    static int DOWN_RIGHT_KNIGHT = 1 >> 10;
-    static int IS_KING = 1 >> 11;
-    static int IS_PAWN = 1 >> 12;
-    static int LEFT_DIAG = 1 >> 14;
-    static int DOWN_LEFT_DIAG = 1 >> 15;
+    static int BASE = 0b10000000000000000000000000000000;
+    static int UP = BASE >> 1;
+    static int RIGHT = BASE >> 2;
+    static int DIAG = BASE >> 3;
+    static int LEFT_KNIGHT = BASE >> 4;
+    static int RIGHT_KNIGHT = BASE >> 5;
+    static int DOWN = BASE >> 6;
+    static int LEFT = BASE >> 7;
+    static int DOWN_DIAG = BASE >> 8;
+    static int DOWN_LEFT_KNIGHT = BASE >> 9;
+    static int DOWN_RIGHT_KNIGHT = BASE >> 10;
+    static int IS_KING = BASE >> 11;
+    static int IS_PAWN = BASE >> 12;
+    static int LEFT_DIAG = BASE >> 14;
+    static int DOWN_LEFT_DIAG = BASE >> 15;
 
     static int KING_MOVES = UP | DOWN | LEFT | RIGHT | IS_KING;
     static int ROOK_MOVES = UP | DOWN | LEFT | RIGHT;
