@@ -173,10 +173,22 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        drawCheckerboard(g);
         for (ChessPiece piece: pieces) {
             piece.paint(g, this);
         }
     }
+
+    private void drawCheckerboard(Graphics g) {
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                if ((row + column) % 2 == 0) g.setColor(new Color(240, 217, 181));
+                else g.setColor(new Color(181, 136, 99));
+                g.fillRect(column * 60, row * 60, 60, 60);
+            }
+        }
+    }
+
 
     //Mouse Listener Stuff
     public void mouseClicked(MouseEvent e){}
