@@ -136,12 +136,6 @@ public class ChessPiece {
             // IMPOSSIBLE
             return;
         }
-        LEFT_KNIGHT = BASE >> 4;
-        RIGHT_KNIGHT = BASE >> 5;
-        DOWN_LEFT_KNIGHT = BASE >> 9;
-        DOWN_RIGHT_KNIGHT = BASE >> 10;
-        IS_ONE = BASE >> 11;
-        IS_KNIGHT_UP = BASE >> 12;
 
         if ((this.moveSet & LEFT_KNIGHT) != 0) {
             positions.add(new int[]{pos.x-2,pos.y-1});
