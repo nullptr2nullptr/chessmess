@@ -106,7 +106,7 @@ public class ChessPiece {
     }
 
     public void playSound(){
-        try{
+        /*try{
             AudioInputStream s = AudioSystem.getAudioInputStream(new File(this.moveFile));
             Clip c = AudioSystem.getClip();
             c.open(s);
@@ -114,7 +114,7 @@ public class ChessPiece {
             s.close();
         }catch(Exception e){
             System.out.println(e.getMessage());
-        }
+        }*/
     }
 
     public String toString() {
