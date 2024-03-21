@@ -25,8 +25,8 @@ public class ChessPiece {
     static int DOWN_DIAG = BASE >> 8;
     static int DOWN_LEFT_KNIGHT = BASE >> 9;
     static int DOWN_RIGHT_KNIGHT = BASE >> 10;
-    static int IS_KING = BASE >> 11;
-    static int IS_PAWN = BASE >> 12;
+    static int IS_ONE = BASE >> 11;
+    static int IS_KNIGHT_UP = BASE >> 12;
     static int LEFT_DIAG = BASE >> 14;
     static int DOWN_LEFT_DIAG = BASE >> 15;
     static int UP_INV = BASE >> 1 >> 16;
@@ -44,10 +44,10 @@ public class ChessPiece {
     static int LEFT_DIAG_INV = BASE >> 14 >> 16;
     static int DOWN_LEFT_DIAG_INV = BASE >> 15 >> 16;
 
-    static int KING_MOVES = UP | DOWN | LEFT | RIGHT | IS_KING;
+    static int KING_MOVES = UP | DOWN | LEFT | RIGHT | IS_ONE;
     static int ROOK_MOVES = UP | DOWN | LEFT | RIGHT;
-    static int PAWN_MOVES = UP | IS_PAWN;
-    static int KNIGHT_MOVES = LEFT_KNIGHT | RIGHT_KNIGHT | DOWN_LEFT_KNIGHT | DOWN_RIGHT_KNIGHT;
+    static int PAWN_MOVES = UP | IS_ONE;
+    static int KNIGHT_MOVES = LEFT_KNIGHT | RIGHT_KNIGHT | DOWN_LEFT_KNIGHT | DOWN_RIGHT_KNIGHT | IS_KNIGHT_UP;
     static int BISHOP_MOVES = DIAG | DOWN_DIAG | LEFT_DIAG | DOWN_LEFT_DIAG;
     static int QUEEN_MOVES = UP | DOWN | LEFT | RIGHT | DIAG | DOWN_DIAG | LEFT_DIAG | DOWN_LEFT_DIAG;
 
@@ -140,11 +140,8 @@ public class ChessPiece {
         RIGHT_KNIGHT = BASE >> 5;
         DOWN_LEFT_KNIGHT = BASE >> 9;
         DOWN_RIGHT_KNIGHT = BASE >> 10;
-        IS_KING = BASE >> 11;
-        IS_PAWN = BASE >> 12;
-
-        DOWN_DIAG = BASE >> 8;
-        DOWN_LEFT_DIAG = BASE >> 15;
+        IS_ONE = BASE >> 11;
+        IS_KNIGHT_UP = BASE >> 12;
         if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
             for (int row = pos.y + negate.negate(); doner.isDone(row); row = row + negate.negate()) {
                 positions.add(new int[]{pos.x, row});
@@ -192,6 +189,30 @@ public class ChessPiece {
                 positions.add(new int[]{col,row});
                 row = row - negate.negate();
             }
+        }
+        if ((this.moveSet & LEFT_KNIGHT) != 0) {
+            positions.add(new int[]{pos.x-2,pos.y-1});
+        }
+        if ((this.moveSet & RIGHT_KNIGHT) != 0) {
+            positions.add(new int[]{pos.x+2,pos.y-1});
+        }
+        if ((this.moveSet & DOWN_LEFT_KNIGHT) != 0) {
+            positions.add(new int[]{pos.x-2,pos.y+1});
+        }
+        if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0) {
+            positions.add(new int[]{pos.x+2,pos.y+1});
+        }
+        if ((this.moveSet & LEFT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+            positions.add(new int[]{pos.x-1,pos.y-2});
+        }
+        if ((this.moveSet & RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+            positions.add(new int[]{pos.x+1,pos.y-2});
+        }
+        if ((this.moveSet & DOWN_LEFT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+            positions.add(new int[]{pos.x-1,pos.y+2});
+        }
+        if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+            positions.add(new int[]{pos.x+1,pos.y+2});
         }
         for (int[] xy: positions) {
             colors.put(new ChessPosition(xy[0], xy[1]), new Color(175, 215, 250));
