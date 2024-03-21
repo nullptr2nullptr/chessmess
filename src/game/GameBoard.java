@@ -101,13 +101,13 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                                     PieceType.PAWN},
                                 false, 6);
 
-        /*this.pieces[4][4]=(new ChessPiece(PieceType.KNIGHT,
+        this.pieces[4][4]=(new ChessPiece(PieceType.KING,
             false,
-            "src/res/image/Chess_nlt60.png",
+            "src/res/image/Chess_klt60.png",
             MOVE_SOUND_FILE,
             new ChessPosition(4, 4),
             PIECE_WIDTH,
-            PIECE_WIDTH));*/
+            PIECE_WIDTH));
     }
 
     private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) {

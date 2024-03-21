@@ -39,17 +39,17 @@ public class ChessPiece {
     static int DOWN_DIAG_INV = BASE >> 8 >> 16;
     static int DOWN_LEFT_KNIGHT_INV = BASE >> 9 >> 16;
     static int DOWN_RIGHT_KNIGHT_INV = BASE >> 10 >> 16;
-    static int IS_KING_INV = BASE >> 11 >> 16;
-    static int IS_PAWN_INV = BASE >> 12 >> 16;
+    static int IS_ONE_INV = BASE >> 11 >> 16;
+    static int IS_KNIGHT_UP_INV = BASE >> 12 >> 16;
     static int LEFT_DIAG_INV = BASE >> 14 >> 16;
     static int DOWN_LEFT_DIAG_INV = BASE >> 15 >> 16;
 
-    static int KING_MOVES = UP | DOWN | LEFT | RIGHT | IS_ONE;
+    static int QUEEN_MOVES = UP | DOWN | LEFT | RIGHT | DIAG | DOWN_DIAG | LEFT_DIAG | DOWN_LEFT_DIAG;
+    static int KING_MOVES = QUEEN_MOVES | IS_ONE;
     static int ROOK_MOVES = UP | DOWN | LEFT | RIGHT;
     static int PAWN_MOVES = UP | IS_ONE;
     static int KNIGHT_MOVES = LEFT_KNIGHT | RIGHT_KNIGHT | DOWN_LEFT_KNIGHT | DOWN_RIGHT_KNIGHT | IS_KNIGHT_UP;
     static int BISHOP_MOVES = DIAG | DOWN_DIAG | LEFT_DIAG | DOWN_LEFT_DIAG;
-    static int QUEEN_MOVES = UP | DOWN | LEFT | RIGHT | DIAG | DOWN_DIAG | LEFT_DIAG | DOWN_LEFT_DIAG;
 
     PieceType type;
     int moveSet;
@@ -142,54 +142,7 @@ public class ChessPiece {
         DOWN_RIGHT_KNIGHT = BASE >> 10;
         IS_ONE = BASE >> 11;
         IS_KNIGHT_UP = BASE >> 12;
-        if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
-            for (int row = pos.y + negate.negate(); doner.isDone(row); row = row + negate.negate()) {
-                positions.add(new int[]{pos.x, row});
-            }
-        }
-        if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
-            for (int row = pos.y + -negate.negate(); doner_opp.isDone(row); row = row + -negate.negate()) {
-                positions.add(new int[]{pos.x, row});
-            }
-        }
-        if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
-            for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
-                positions.add(new int[]{col, pos.y});
-            }
-        }
-        if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
-            for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
-                positions.add(new int[]{col, pos.y});
-            }
-        }
-        if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
-            int row = pos.y + negate.negate();
-            for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
-                positions.add(new int[]{col,row});
-                row = row + negate.negate();
-            }
-        }
-        if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
-            int row = pos.y + negate.negate();
-            for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
-                positions.add(new int[]{col,row});
-                row = row + negate.negate();
-            }
-        }
-        if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
-            int row = pos.y - negate.negate();
-            for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
-                positions.add(new int[]{col,row});
-                row = row - negate.negate();
-            }
-        }
-        if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
-            int row = pos.y - negate.negate();
-            for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
-                positions.add(new int[]{col,row});
-                row = row - negate.negate();
-            }
-        }
+
         if ((this.moveSet & LEFT_KNIGHT) != 0) {
             positions.add(new int[]{pos.x-2,pos.y-1});
         }
@@ -214,6 +167,83 @@ public class ChessPiece {
         if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
             positions.add(new int[]{pos.x+1,pos.y+2});
         }
+        
+        if (((this.moveSet & IS_ONE) != 0 && !isInverted()) || ((this.moveSet & IS_ONE_INV) != 0 && isInverted())) {
+            if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x, pos.y + negate.negate()});
+            }
+            if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x, pos.y + -negate.negate()});
+            }
+            if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x + -negate.negate(), pos.y});
+            }
+            if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x + negate.negate(), pos.y});
+            }
+            if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x + -negate.negate(), pos.y + negate.negate()});
+            }
+            if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
+            }
+            if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x + -negate.negate(), pos.y + -negate.negate()});
+            }
+            if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
+                positions.add(new int[]{pos.x + negate.negate(), pos.y + -negate.negate()});
+            }
+        } else {
+            if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
+                for (int row = pos.y + negate.negate(); doner.isDone(row); row = row + negate.negate()) {
+                    positions.add(new int[]{pos.x, row});
+                }
+            }
+            if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
+                for (int row = pos.y + -negate.negate(); doner_opp.isDone(row); row = row + -negate.negate()) {
+                    positions.add(new int[]{pos.x, row});
+                }
+            }
+            if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
+                for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                    positions.add(new int[]{col, pos.y});
+                }
+            }
+            if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
+                for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                    positions.add(new int[]{col, pos.y});
+                }
+            }
+            if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
+                int row = pos.y + negate.negate();
+                for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                    positions.add(new int[]{col,row});
+                    row = row + negate.negate();
+                }
+            }
+            if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
+                int row = pos.y + negate.negate();
+                for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                    positions.add(new int[]{col,row});
+                    row = row + negate.negate();
+                }
+            }
+            if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
+                int row = pos.y - negate.negate();
+                for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                    positions.add(new int[]{col,row});
+                    row = row - negate.negate();
+                }
+            }
+            if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
+                int row = pos.y - negate.negate();
+                for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                    positions.add(new int[]{col,row});
+                    row = row - negate.negate();
+                }
+            }
+        }
+
         for (int[] xy: positions) {
             colors.put(new ChessPosition(xy[0], xy[1]), new Color(175, 215, 250));
         }
