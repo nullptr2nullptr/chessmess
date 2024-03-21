@@ -239,7 +239,24 @@ public class ChessPiece {
         }
 
         for (int[] xy: positions) {
-            colors.put(new ChessPosition(xy[0], xy[1]), new Color(175, 215, 250));
+            boolean skip = false;
+            for (ChessPiece[] row: pieces) {
+                for (ChessPiece p: row) {
+                    if (p==null) {
+                        continue;
+                    }
+                    if ((p.pos.x == xy[0] && p.pos.y == xy[1]) && p.isInverted() == this.isInverted() && p != this) {
+                        skip=true;
+                        break;
+                    }
+                }
+                if (skip) {
+                    break;
+                }
+            }
+            if (!skip) {
+                colors.put(new ChessPosition(xy[0], xy[1]), new Color(175, 215, 250));
+            }
         }
         isDrawingDots = false;
     }
