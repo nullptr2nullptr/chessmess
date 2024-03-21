@@ -1,6 +1,7 @@
 package pieces;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.sound.sampled.AudioInputStream;
@@ -28,6 +29,20 @@ public class ChessPiece {
     static int IS_PAWN = BASE >> 12;
     static int LEFT_DIAG = BASE >> 14;
     static int DOWN_LEFT_DIAG = BASE >> 15;
+    static int UP_INV = BASE >> 1 >> 16;
+    static int RIGHT_INV = BASE >> 2 >> 16;
+    static int DIAG_INV = BASE >> 3 >> 16;
+    static int LEFT_KNIGHT_INV = BASE >> 4 >> 16;
+    static int RIGHT_KNIGHT_INV = BASE >> 5 >> 16;
+    static int DOWN_INV = BASE >> 6 >> 16;
+    static int LEFT_INV = BASE >> 7 >> 16;
+    static int DOWN_DIAG_INV = BASE >> 8 >> 16;
+    static int DOWN_LEFT_KNIGHT_INV = BASE >> 9 >> 16;
+    static int DOWN_RIGHT_KNIGHT_INV = BASE >> 10 >> 16;
+    static int IS_KING_INV = BASE >> 11 >> 16;
+    static int IS_PAWN_INV = BASE >> 12 >> 16;
+    static int LEFT_DIAG_INV = BASE >> 14 >> 16;
+    static int DOWN_LEFT_DIAG_INV = BASE >> 15 >> 16;
 
     static int KING_MOVES = UP | DOWN | LEFT | RIGHT | IS_KING;
     static int ROOK_MOVES = UP | DOWN | LEFT | RIGHT;
@@ -92,11 +107,94 @@ public class ChessPiece {
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
-    public void preparePaint(HashMap<ChessPosition, Color> colors){
+    public void preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
+        ArrayList<int[]> positions = new ArrayList<>();
+        Negator negate;
+        IsDone doner;
+        IsDone doner_opp;
         if (!isInverted() && isDrawingDots) {
-            colors.put(new ChessPosition(pos.x, pos.y-1), Color.BLUE);
+            negate = () -> {
+                return -1;
+            };
+            doner = (x) -> {
+                return x >= 0;
+            };
+            doner_opp = (x) -> {
+                return x <= 8;
+            };
         } else if (isInverted() && isDrawingDots) {
-            colors.put(new ChessPosition(pos.x, pos.y+1), Color.BLUE);
+            negate = () -> {
+                return 1;
+            };
+            doner = (x) -> {
+                return x <= 8;
+            };
+            doner_opp = (x) -> {
+                return x >= 0;
+            };
+        } else {
+            // IMPOSSIBLE
+            return;
+        }
+        LEFT_KNIGHT = BASE >> 4;
+        RIGHT_KNIGHT = BASE >> 5;
+        DOWN_LEFT_KNIGHT = BASE >> 9;
+        DOWN_RIGHT_KNIGHT = BASE >> 10;
+        IS_KING = BASE >> 11;
+        IS_PAWN = BASE >> 12;
+
+        DOWN_DIAG = BASE >> 8;
+        DOWN_LEFT_DIAG = BASE >> 15;
+        if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
+            for (int row = pos.y + negate.negate(); doner.isDone(row); row = row + negate.negate()) {
+                positions.add(new int[]{pos.x, row});
+            }
+        }
+        if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
+            for (int row = pos.y + -negate.negate(); doner_opp.isDone(row); row = row + -negate.negate()) {
+                positions.add(new int[]{pos.x, row});
+            }
+        }
+        if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
+            for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                positions.add(new int[]{col, pos.y});
+            }
+        }
+        if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
+            for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                positions.add(new int[]{col, pos.y});
+            }
+        }
+        if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
+            int row = pos.y + negate.negate();
+            for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                positions.add(new int[]{col,row});
+                row = row + negate.negate();
+            }
+        }
+        if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
+            int row = pos.y + negate.negate();
+            for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                positions.add(new int[]{col,row});
+                row = row + negate.negate();
+            }
+        }
+        if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
+            int row = pos.y - negate.negate();
+            for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                positions.add(new int[]{col,row});
+                row = row - negate.negate();
+            }
+        }
+        if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
+            int row = pos.y - negate.negate();
+            for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                positions.add(new int[]{col,row});
+                row = row - negate.negate();
+            }
+        }
+        for (int[] xy: positions) {
+            colors.put(new ChessPosition(xy[0], xy[1]), new Color(175, 215, 250));
         }
         isDrawingDots = false;
     }
@@ -146,5 +244,13 @@ public class ChessPiece {
             v_y = -1 * v_y;
             y = height - this.height;
         }*/
+    }
+
+    interface Negator {
+        int negate();
+    }
+
+    interface IsDone {
+        boolean isDone(int x);
     }
 }

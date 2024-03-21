@@ -14,7 +14,7 @@ import java.util.TreeSet;
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener, KeyListener {
 
     public static int PIECE_WIDTH = 60;
-    private ArrayList<ChessPiece> pieces = new ArrayList<>();
+    private ChessPiece[][] pieces = new ChessPiece[8][8];
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
@@ -100,77 +100,48 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                                     PieceType.PAWN,
                                     PieceType.PAWN},
                                 false, 6);
+
+        this.pieces[4][4]=(new ChessPiece(PieceType.QUEEN,
+            false,
+            "src/res/image/Chess_qlt60.png",
+            MOVE_SOUND_FILE,
+            new ChessPosition(4, 4),
+            PIECE_WIDTH,
+            PIECE_WIDTH));
     }
 
     private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) {
-        pieces.add(new ChessPiece(types[0],
-            isInverted,
-            icons[0],
-            MOVE_SOUND_FILE,
-            new ChessPosition(0, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[1],
-            isInverted,
-            icons[1],
-            MOVE_SOUND_FILE,
-            new ChessPosition(1, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[2],
-            isInverted,
-            icons[2],
-            MOVE_SOUND_FILE,
-            new ChessPosition(2, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[3],
-            isInverted,
-            icons[3],
-            MOVE_SOUND_FILE,
-            new ChessPosition(3, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[4],
-            isInverted,
-            icons[4],
-            MOVE_SOUND_FILE,
-            new ChessPosition(4, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[5],
-            isInverted,
-            icons[5],
-            MOVE_SOUND_FILE,
-            new ChessPosition(5, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[6],
-            isInverted,
-            icons[6],
-            MOVE_SOUND_FILE,
-            new ChessPosition(6, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
-        pieces.add(new ChessPiece(types[7],
-            isInverted,
-            icons[7],
-            MOVE_SOUND_FILE,
-            new ChessPosition(7, row),
-            PIECE_WIDTH,
-            PIECE_WIDTH));
+        for (int col = 0; col < 8; col++) {
+            this.pieces[row][col]=(new ChessPiece(types[col],
+                isInverted,
+                icons[col],
+                MOVE_SOUND_FILE,
+                new ChessPosition(col, row),
+                PIECE_WIDTH,
+                PIECE_WIDTH));
+        }
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         HashMap<ChessPosition, Color> colors = new HashMap<>();
-        for (ChessPiece piece: pieces) {
-            piece.preparePaint(colors);
+        for (ChessPiece[] pieces2: pieces) {
+            for (ChessPiece piece: pieces2) {
+                if (piece == null) {
+                    continue;
+                }
+                piece.preparePaint(colors, pieces);
+            }
         }
         drawCheckerboard(g, colors);
-        for (ChessPiece piece: pieces) {
-            piece.paint(g, this);
+        for (ChessPiece[] pieces2: pieces) {
+            for (ChessPiece piece: pieces2) {
+                if (piece == null) {
+                    continue;
+                }
+                piece.paint(g, this);
+            }
         }
     }
 
@@ -213,10 +184,15 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         mouse_x = e.getX();
         mouse_y = e.getY();
         ChessPosition pos = new ChessPosition(mouse_x/PIECE_WIDTH, mouse_y/PIECE_WIDTH);
-        for (ChessPiece p: pieces) {
-            if (p.isTouching(pos)) {
-                handlePieceClick(p, pos);
-                break;
+        for (ChessPiece[] pieces2: pieces) {
+            for (ChessPiece p: pieces2) {
+                if (p == null) {
+                    continue;
+                }
+                if (p.isTouching(pos)) {
+                    handlePieceClick(p, pos);
+                    break;
+                }
             }
         }
         repaint();
