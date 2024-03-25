@@ -1,8 +1,11 @@
 package pieces;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.sound.sampled.*;
 import javax.swing.ImageIcon;
 
 import game.GameBoard;
@@ -55,6 +58,7 @@ public class ChessPiece {
     ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
     String moveFile;
+    Clip moveClip;
     boolean isDrawingDots;
     boolean isInverted;
 
@@ -101,7 +105,8 @@ public class ChessPiece {
         return this.isInverted; //(this.moveSet & 0b00000000000000001111111111111111) == this.moveSet;
     }
 
-    public void paint(Graphics g, GameBoard p){
+    public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        openMoveSound();
         playSound();
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
@@ -467,16 +472,23 @@ public class ChessPiece {
         return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
 
-    public void playSound(){
-        /*try{
+    public void openMoveSound() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        try {
             AudioInputStream s = AudioSystem.getAudioInputStream(new File(this.moveFile));
-            Clip c = AudioSystem.getClip();
-            c.open(s);
-            c.start();
-            s.close();
+            moveClip = AudioSystem.getClip();
+            moveClip.open(s);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void playSound(){
+        try{
+            moveClip.start();
+            moveClip.close();
         }catch(Exception e){
             System.out.println(e.getMessage());
-        }*/
+        }
     }
 
     public String toString() {

@@ -1,12 +1,16 @@
 package game;
 import java.awt.*;
 import java.awt.event.*;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
+import java.awt.Color;
 
 import pieces.ChessPiece;
 import pieces.ChessPosition;
 import pieces.PieceType;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -131,7 +135,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (piece == null) {
                     continue;
                 }
-                piece.paint(g, this);
+                try {
+                    piece.paint(g, this);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
             }
         }
     }
