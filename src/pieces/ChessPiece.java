@@ -105,6 +105,8 @@ public class ChessPiece {
     }
 
     public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        // TODO: The playSound() function cannot be called here because of the number of times the paint() function is called
+        // playSound(moveFile);
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
@@ -470,14 +472,13 @@ public class ChessPiece {
     }
 
 
-    public static void playMoveSound(){
+    public static void playSound(String sound){
         try{
-            AudioInputStream s = AudioSystem.getAudioInputStream(new File(moveFile));
+            AudioInputStream s = AudioSystem.getAudioInputStream(new File(sound));
             Clip c = AudioSystem.getClip();
-            System.out.println("Playing sound");
             c.open(s);
             c.start();
-            c.close();
+            s.close();
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
