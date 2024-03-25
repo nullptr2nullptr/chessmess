@@ -1,12 +1,8 @@
 package pieces;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 
 import game.GameBoard;
