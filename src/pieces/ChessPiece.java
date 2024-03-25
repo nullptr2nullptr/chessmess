@@ -57,22 +57,19 @@ public class ChessPiece {
     int width, height;
     ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
-    String moveFile;
-    Clip moveClip;
+    static String moveFile;
     boolean isDrawingDots;
     boolean isInverted;
 
     public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         this.type = type;
         this.icon = new ImageIcon(iconPath);
-        this.moveFile = moveFile;
+        ChessPiece.moveFile = moveFile;
         this.pos = pos;
         this.width = width;
         this.height = height;
         this.isDrawingDots = false;
         this.isInverted = isInverted;
-
-        openMoveSound();
 
         switch (type) {
             case ROOK:
@@ -108,7 +105,6 @@ public class ChessPiece {
     }
 
     public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-        playSound();
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
@@ -473,20 +469,15 @@ public class ChessPiece {
         return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
 
-    public void openMoveSound() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        try {
-            AudioInputStream s = AudioSystem.getAudioInputStream(new File(this.moveFile));
-            moveClip = AudioSystem.getClip();
-            moveClip.open(s);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
 
-    public void playSound(){
+    public static void playMoveSound(){
         try{
-            moveClip.start();
-            moveClip.close();
+            AudioInputStream s = AudioSystem.getAudioInputStream(new File(moveFile));
+            Clip c = AudioSystem.getClip();
+            System.out.println("Playing sound");
+            c.open(s);
+            c.start();
+            c.close();
         }catch(Exception e){
             System.out.println(e.getMessage());
         }

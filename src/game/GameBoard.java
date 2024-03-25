@@ -169,7 +169,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
 
     //Mouse Listener Stuff
-    public void mouseClicked(MouseEvent e){}
+    public void mouseClicked(MouseEvent e){
+        System.out.println("Clicked!");
+        ChessPiece.playMoveSound();
+    }
 
     public void mouseEntered(MouseEvent e){}
 
