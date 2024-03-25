@@ -106,7 +106,7 @@ public class ChessPiece {
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
-    public void preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
+    public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
         ArrayList<int[]> positions = new ArrayList<>();
         ArrayList<int[]> thingsToTake = new ArrayList<>();
         Negator negate;
@@ -134,7 +134,7 @@ public class ChessPiece {
             };
         } else {
             // IMPOSSIBLE
-            return;
+            return new PieceSelectedMoves(positions, thingsToTake);
         }
         
         if (!isInverted()) {
@@ -460,6 +460,7 @@ public class ChessPiece {
             }
         }
         isDrawingDots = false;
+        return new PieceSelectedMoves(positions, thingsToTake);
     }
 
     public boolean isTouching(ChessPosition mouse_pos){
