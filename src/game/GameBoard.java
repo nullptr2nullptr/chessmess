@@ -23,7 +23,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private int width, height;
     private String MOVE_SOUND_FILE = "src/res/sound/move.wav";
 
-    public GameBoard() {
+    public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setFocusable(true);
         this.width = PIECE_WIDTH * 8;
         this.height = PIECE_WIDTH * 8;
@@ -105,7 +105,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                                 false, 6);
     }
 
-    private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) {
+    private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         for (int col = 0; col < 8; col++) {
             this.pieces[row][col]=(new ChessPiece(types[col],
                 isInverted,
