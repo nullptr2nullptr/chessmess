@@ -139,6 +139,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     piece.paint(g, this);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
+                }
             }
         }
     }
