@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import pieces.ChessPiece;
 import pieces.ChessPosition;
+import pieces.PieceSelectedMoves;
 import pieces.PieceType;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
     private String MOVE_SOUND_FILE = "src/res/sound/move.wav";
+    private PieceSelectedMoves moves = null;
 
     public GameBoard() {
         setFocusable(true);
@@ -122,7 +124,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (piece == null) {
                     continue;
                 }
-                piece.preparePaint(colors, pieces);
+                PieceSelectedMoves moves = piece.preparePaint(colors, pieces);
+                if (this.moves == null) {
+                    this.moves = moves;
+                }
             }
         }
         drawCheckerboard(g, colors);
@@ -175,14 +180,36 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         mouse_x = e.getX();
         mouse_y = e.getY();
         ChessPosition pos = new ChessPosition(mouse_x/PIECE_WIDTH, mouse_y/PIECE_WIDTH);
-        for (ChessPiece[] pieces2: pieces) {
-            for (ChessPiece p: pieces2) {
-                if (p == null) {
-                    continue;
+        if (this.moves != null) {
+            ChessPiece piece = this.moves.p;
+            for (int[] xy: this.moves.positions) {
+                if (xy[0] == pos.x && xy[1] == pos.y) {
+                    this.pieces[piece.pos.y][piece.pos.x] = null;
+                    this.pieces[pos.y][pos.x] = piece;
+                    piece.pos = pos;
                 }
-                if (p.isTouching(pos)) {
-                    handlePieceClick(p, pos);
-                    break;
+            }
+            for (int[] xy: this.moves.thingsToTake) {
+                if (xy[0] == pos.x && xy[1] == pos.y) {
+                    ChessPiece pieceAt = this.pieces[pos.y][pos.x];
+                    System.out.println(pieceAt);
+                    this.pieces[piece.pos.y][piece.pos.x] = null;
+                    this.pieces[pos.y][pos.x] = piece;
+                    piece.pos = pos;
+                }
+            }
+            this.moves = null;
+        }
+        else {
+            for (ChessPiece[] pieces2: pieces) {
+                for (ChessPiece p: pieces2) {
+                    if (p == null) {
+                        continue;
+                    }
+                    if (p.isTouching(pos)) {
+                        handlePieceClick(p, pos);
+                        break;
+                    }
                 }
             }
         }
