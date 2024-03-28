@@ -3,11 +3,13 @@ package pieces;
 import java.util.ArrayList;
 
 public class PieceSelectedMoves {
-    ArrayList<int[]> positions;
-    ArrayList<int[]> thingsToTake;
+    public ArrayList<int[]> positions;
+    public ArrayList<int[]> thingsToTake;
+    public ChessPiece p;
 
-    public PieceSelectedMoves(ArrayList<int[]> positions, ArrayList<int[]> thingsToTake) {
+    public PieceSelectedMoves(ArrayList<int[]> positions, ArrayList<int[]> thingsToTake, ChessPiece p) {
         this.positions=positions;
         this.thingsToTake=thingsToTake;
+        this.p=p;
     }
 }
