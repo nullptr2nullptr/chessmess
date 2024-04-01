@@ -2,15 +2,22 @@ package pieces;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import javax.swing.ImageIcon;
 
 import game.GameBoard;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Color;
 
 public class ChessPiece {
     static int BASE = 0b1000000000000000000000000000000;
