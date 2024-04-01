@@ -196,6 +196,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
+                    if (piece.isPromotable() && piece.pos.y == 0 || piece.pos.y == 7) {
+                        piece.promoteToQueen();
+                    }
                 }
             }
             for (int[] xy: this.moves.thingsToTake) {
@@ -206,6 +209,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
+                    if (piece.isPromotable() && piece.pos.y == 0 || piece.pos.y == 7) {
+                        piece.promoteToQueen();
+                    }
                 }
             }
             this.moves = null;

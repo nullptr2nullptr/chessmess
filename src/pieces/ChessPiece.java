@@ -104,6 +104,20 @@ public class ChessPiece {
         }
     }
 
+    public void promoteToQueen() {
+        this.moveSet = QUEEN_MOVES;
+        if (isInverted) {
+            this.icon = new ImageIcon("src/res/image/Chess_qdt60.png");
+            this.invertMoveSet();
+        } else {
+            this.icon = new ImageIcon("src/res/image/Chess_qlt60.png");
+        }
+    }
+
+    public boolean isPromotable() {
+        return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
+    }
+
     public void invertMoveSet() {
         this.moveSet = this.moveSet >> 16;
     }
@@ -181,7 +195,6 @@ public class ChessPiece {
             }
         }
         else {
-        
             if (!isInverted()) {
                 if ((this.moveSet & LEFT_KNIGHT) != 0) {
                     positions.add(new int[]{pos.x-2,pos.y-1});
@@ -284,6 +297,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[row][pos.x];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{pos.x, row});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -299,6 +313,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[row][pos.x];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{pos.x, row});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -314,6 +329,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[pos.y][col];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{col, pos.y});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -329,6 +345,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[pos.y][col];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{col, pos.y});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -345,6 +362,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[row][col];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{col,row});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -362,6 +380,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[row][col];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{col,row});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -379,6 +398,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[row][col];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{col,row});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
@@ -396,6 +416,7 @@ public class ChessPiece {
                         }
                         ChessPiece p = pieces[row][col];
                         if (p != null && p.isInverted() != this.isInverted()) {
+                            thingsToTake.add(new int[]{col,row});
                             break;
                         }
                         if (p != null && p.isInverted() == this.isInverted()) {
