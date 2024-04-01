@@ -23,6 +23,8 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
 
+    private PieceSelectedMoves moves = null;
+
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setFocusable(true);
         this.width = PIECE_WIDTH * 8;
