@@ -1,5 +1,9 @@
 package pieces;
 
+/*
+ * This code is very complicated. Do not _ever_ touch it - it will break. It is a fragile eggshell...
+ */
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -197,91 +201,43 @@ public class ChessPiece {
         if (((this.moveSet & IS_ONE) != 0 && !isInverted()) || ((this.moveSet & IS_ONE_INV) != 0 && isInverted())) {
             if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
                 if (!(pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y + negate.negate()][pos.x];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x, pos.y + negate.negate()});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x, pos.y + negate.negate()});
-                    }
+                    positions.add(new int[]{pos.x, pos.y + negate.negate()});
                 }
             }
             if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
                 if (!(pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y + -negate.negate()][pos.x];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x, pos.y + -negate.negate()});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x, pos.y + -negate.negate()});
-                    }
+                    positions.add(new int[]{pos.x, pos.y + -negate.negate()});
                 }
             }
             if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
                 if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y][pos.x + -negate.negate()];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x + -negate.negate(), pos.y});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x + -negate.negate(), pos.y});
-                    }
+                    positions.add(new int[]{pos.x + -negate.negate(), pos.y});
                 }
             }
             if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
                 if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y][pos.x + negate.negate()];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x + negate.negate(), pos.y});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x + negate.negate(), pos.y});
-                    }
+                    positions.add(new int[]{pos.x + negate.negate(), pos.y});
                 }
             }
             if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
                 if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8 || pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y + negate.negate()][pos.x + -negate.negate()];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x + -negate.negate(), pos.y + negate.negate()});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x + -negate.negate(), pos.y + negate.negate()});
-                    }
+                    positions.add(new int[]{pos.x + -negate.negate(), pos.y + negate.negate()});
                 }
             }
             if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
                 positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
                 if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8 || pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y + negate.negate()][pos.x + negate.negate()];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
-                    }
+                    positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
                 }
             }
             if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
                 if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8 || pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y + -negate.negate()][pos.x + -negate.negate()];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x + -negate.negate(), pos.y + -negate.negate()});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x + -negate.negate(), pos.y + -negate.negate()});
-                    }
+                    positions.add(new int[]{pos.x + -negate.negate(), pos.y + -negate.negate()});
                 }
             }
             if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
                 if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8 || pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
-                    ChessPiece p = pieces[pos.y + -negate.negate()][pos.x + negate.negate()];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x + negate.negate(), pos.y + -negate.negate()});
-                    } else if (p != null && p.isInverted() == this.isInverted()) { }
-                    else {
-                        positions.add(new int[]{pos.x + negate.negate(), pos.y + -negate.negate()});
-                    }
+                    positions.add(new int[]{pos.x + negate.negate(), pos.y + -negate.negate()});
                 }
             }
         } else {
@@ -292,7 +248,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[row][pos.x];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x, row});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -308,7 +263,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[row][pos.x];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{pos.x, row});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -324,7 +278,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[pos.y][col];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{col, pos.y});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -340,7 +293,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[pos.y][col];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{col, pos.y});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -357,7 +309,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[row][col];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{col,row});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -375,7 +326,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[row][col];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{col,row});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -393,7 +343,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[row][col];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{col,row});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -411,7 +360,6 @@ public class ChessPiece {
                     }
                     ChessPiece p = pieces[row][col];
                     if (p != null && p.isInverted() != this.isInverted()) {
-                        thingsToTake.add(new int[]{col,row});
                         break;
                     }
                     if (p != null && p.isInverted() == this.isInverted()) {
@@ -422,8 +370,29 @@ public class ChessPiece {
                 }
             }
         }
-
+        ArrayList<int[]> new_positions = new ArrayList<>();
+        ArrayList<int[]> new_thingsToTake = new ArrayList<>();
         for (int[] xy: positions) {
+            if (xy[1] >= 8 || xy[1] < 0 || xy[0] >= 8 || xy[0] < 0) {
+                continue;
+            }
+            if (pieces[xy[1]][xy[0]] != null && pieces[xy[1]][xy[0]].isInverted() != this.isInverted()) {
+                new_thingsToTake.add(xy);
+                continue;
+            } else if (pieces[xy[1]][xy[0]] == null) {
+                new_positions.add(xy);
+            }
+        }
+        for (int[] xy: thingsToTake) {
+            if (xy[1] >= 8 || xy[1] < 0 || xy[0] >= 8 || xy[0] < 0) {
+                continue;
+            }
+            else {
+                new_thingsToTake.add(xy);
+            }
+        }
+
+        for (int[] xy: new_positions) {
             boolean skip = false;
             for (ChessPiece[] row: pieces) {
                 for (ChessPiece p: row) {
@@ -444,7 +413,7 @@ public class ChessPiece {
             }
         }
 
-        for (int[] xy: thingsToTake) {
+        for (int[] xy: new_thingsToTake) {
             boolean skip = false;
             for (ChessPiece[] row: pieces) {
                 for (ChessPiece p: row) {
@@ -465,7 +434,7 @@ public class ChessPiece {
             }
         }
         isDrawingDots = false;
-        return new PieceSelectedMoves(positions, thingsToTake, this);
+        return new PieceSelectedMoves(new_positions, new_thingsToTake, this);
     }
 
     public boolean isTouching(ChessPosition mouse_pos){

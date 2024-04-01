@@ -4,7 +4,6 @@ import java.awt.event.*;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
-import java.awt.Color;
 
 import pieces.ChessPiece;
 import pieces.ChessPosition;
@@ -12,6 +11,7 @@ import pieces.PieceSelectedMoves;
 import pieces.PieceType;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
 
