@@ -1,13 +1,17 @@
 package game;
 import java.awt.*;
 import java.awt.event.*;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
+import java.awt.Color;
 
 import pieces.ChessPiece;
 import pieces.ChessPosition;
 import pieces.PieceSelectedMoves;
 import pieces.PieceType;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -18,10 +22,8 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
-    private String MOVE_SOUND_FILE = "src/res/sound/move.wav";
-    private PieceSelectedMoves moves = null;
 
-    public GameBoard() {
+    public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setFocusable(true);
         this.width = PIECE_WIDTH * 8;
         this.height = PIECE_WIDTH * 8;
@@ -103,12 +105,11 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                                 false, 6);
     }
 
-    private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) {
+    private void addMostPiecesLeftToRight(String[] icons, PieceType[] types, boolean isInverted, int row) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         for (int col = 0; col < 8; col++) {
             this.pieces[row][col]=(new ChessPiece(types[col],
                 isInverted,
                 icons[col],
-                MOVE_SOUND_FILE,
                 new ChessPosition(col, row),
                 PIECE_WIDTH,
                 PIECE_WIDTH));
@@ -136,7 +137,11 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (piece == null) {
                     continue;
                 }
-                piece.paint(g, this);
+                try {
+                    piece.paint(g, this);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
@@ -166,7 +171,8 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
 
     //Mouse Listener Stuff
-    public void mouseClicked(MouseEvent e){}
+    public void mouseClicked(MouseEvent e){
+    }
 
     public void mouseEntered(MouseEvent e){}
 

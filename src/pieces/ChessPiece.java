@@ -1,8 +1,11 @@
 package pieces;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.sound.sampled.*;
 import javax.swing.ImageIcon;
 
 import game.GameBoard;
@@ -54,14 +57,16 @@ public class ChessPiece {
     int width, height;
     public ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
-    String moveFile;
+    private final static String MOVE_SOUND_FILE = "src/res/sound/move.wav";
+    private final static String PEW_SOUND_FILE = "src/res/sound/pew.wav";
+    private final static String TROMBONE_SOUND_FILE = "src/res/sound/trombone.wav";
+    private final static String LEGO_SOUND_FILE = "src/res/sound/lego.wav";
     boolean isDrawingDots;
     boolean isInverted;
 
-    public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, ChessPosition pos, int width, int height) {
+    public ChessPiece(PieceType type, boolean isInverted, String iconPath, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         this.type = type;
         this.icon = new ImageIcon(iconPath);
-        this.moveFile = moveFile;
         this.pos = pos;
         this.width = width;
         this.height = height;
@@ -101,8 +106,8 @@ public class ChessPiece {
         return this.isInverted; //(this.moveSet & 0b00000000000000001111111111111111) == this.moveSet;
     }
 
-    public void paint(Graphics g, GameBoard p){
-        playSound();
+    public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        // TODO: The playSound() function cannot be called here because of the number of times the paint() function is called
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
@@ -467,16 +472,17 @@ public class ChessPiece {
         return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
 
-    public void playSound(){
-        /*try{
-            AudioInputStream s = AudioSystem.getAudioInputStream(new File(this.moveFile));
+
+    public static void playSound(String sound){
+        try{
+            AudioInputStream s = AudioSystem.getAudioInputStream(new File(sound));
             Clip c = AudioSystem.getClip();
             c.open(s);
             c.start();
             s.close();
         }catch(Exception e){
             System.out.println(e.getMessage());
-        }*/
+        }
     }
 
     public String toString() {
