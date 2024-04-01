@@ -25,7 +25,6 @@ import pieces.PieceSelectedMoves;
 import pieces.PieceType;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
 
