@@ -110,13 +110,15 @@ public class ChessPiece {
         }
     }
 
-    public void promoteToQueen() {
-        this.moveSet = QUEEN_MOVES;
-        if (isInverted) {
-            this.icon = new ImageIcon("src/res/image/Chess_qdt60.png");
-            this.invertMoveSet();
-        } else {
-            this.icon = new ImageIcon("src/res/image/Chess_qlt60.png");
+    public void tryPromoteToQueen() {
+        if (this.isPromotable() && pos.y == 0 || pos.y == 7) {
+            this.moveSet = QUEEN_MOVES;
+            if (isInverted) {
+                this.icon = new ImageIcon("src/res/image/Chess_qdt60.png");
+                this.invertMoveSet();
+            } else {
+                this.icon = new ImageIcon("src/res/image/Chess_qlt60.png");
+            }
         }
     }
 
