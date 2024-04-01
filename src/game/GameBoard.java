@@ -205,18 +205,22 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
             ChessPiece piece = this.moves.p;
             for (int[] xy: this.moves.positions) {
                 if (xy[0] == pos.x && xy[1] == pos.y) {
+                    piece.moveCount++;
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
+                    piece.tryPromoteToQueen();
                 }
             }
             for (int[] xy: this.moves.thingsToTake) {
                 if (xy[0] == pos.x && xy[1] == pos.y) {
+                    piece.moveCount++;
                     ChessPiece pieceAt = this.pieces[pos.y][pos.x];
                     System.out.println(pieceAt);
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
+                    piece.tryPromoteToQueen();
                 }
             }
             this.moves = null;
