@@ -55,7 +55,7 @@ public class ChessPiece {
     int moveSet;
     ImageIcon icon;
     int width, height;
-    ChessPosition pos;
+    public ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
     private final static String MOVE_SOUND_FILE = "src/res/sound/move.wav";
     private final static String PEW_SOUND_FILE = "src/res/sound/pew.wav";
@@ -139,7 +139,7 @@ public class ChessPiece {
             };
         } else {
             // IMPOSSIBLE
-            return new PieceSelectedMoves(positions, thingsToTake);
+            return null;
         }
         
         if (!isInverted()) {
@@ -465,7 +465,7 @@ public class ChessPiece {
             }
         }
         isDrawingDots = false;
-        return new PieceSelectedMoves(positions, thingsToTake);
+        return new PieceSelectedMoves(positions, thingsToTake, this);
     }
 
     public boolean isTouching(ChessPosition mouse_pos){
