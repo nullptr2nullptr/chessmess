@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 import javax.sound.sampled.*;
 import javax.swing.ImageIcon;
@@ -67,6 +68,7 @@ public class ChessPiece {
     private final static String LEGO_SOUND_FILE = "src/res/sound/lego.wav";
     boolean isDrawingDots;
     boolean isInverted;
+    public int moveCount;
 
     public ChessPiece(PieceType type, boolean isInverted, String iconPath, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         this.type = type;
@@ -145,228 +147,263 @@ public class ChessPiece {
             // IMPOSSIBLE
             return null;
         }
-        
-        if (!isInverted()) {
-            if ((this.moveSet & LEFT_KNIGHT) != 0) {
-                positions.add(new int[]{pos.x-2,pos.y-1});
+
+        if (this.moveSet == PAWN_MOVES || this.moveSet == PAWN_MOVES >> 16) {
+            if (this.moveSet == PAWN_MOVES && this.moveCount == 0) {
+                positions.add(new int[]{pos.x, pos.y - 1});
+                positions.add(new int[]{pos.x, pos.y - 2});
             }
-            if ((this.moveSet & RIGHT_KNIGHT) != 0) {
-                positions.add(new int[]{pos.x+2,pos.y-1});
+            else if (this.moveSet == PAWN_MOVES >> 16 && this.moveCount == 0) {
+                positions.add(new int[]{pos.x, pos.y + 1});
+                positions.add(new int[]{pos.x, pos.y + 2});
             }
-            if ((this.moveSet & DOWN_LEFT_KNIGHT) != 0) {
-                positions.add(new int[]{pos.x-2,pos.y+1});
+            else if (this.moveSet == PAWN_MOVES && this.moveCount != 0) {
+                if (pieces[pos.y-1][pos.x-1] == null) {
+                    positions.add(new int[]{pos.x, pos.y - 1});
+                }
+                if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
+                    thingsToTake.add(new int[]{pos.x - 1, pos.y - 1});
+                }
+                if (pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
+                    thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
+                }
             }
-            if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0) {
-                positions.add(new int[]{pos.x+2,pos.y+1});
-            }
-            if ((this.moveSet & LEFT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
-                positions.add(new int[]{pos.x-1,pos.y-2});
-            }
-            if ((this.moveSet & RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
-                positions.add(new int[]{pos.x+1,pos.y-2});
-            }
-            if ((this.moveSet & DOWN_LEFT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
-                positions.add(new int[]{pos.x-1,pos.y+2});
-            }
-            if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
-                positions.add(new int[]{pos.x+1,pos.y+2});
-            }
-        } else {
-            if ((this.moveSet & LEFT_KNIGHT_INV) != 0) {
-                positions.add(new int[]{pos.x+2,pos.y+1});
-            }
-            if ((this.moveSet & RIGHT_KNIGHT_INV) != 0) {
-                positions.add(new int[]{pos.x-2,pos.y+1});
-            }
-            if ((this.moveSet & DOWN_LEFT_KNIGHT_INV) != 0) {
-                positions.add(new int[]{pos.x+2,pos.y-1});
-            }
-            if ((this.moveSet & DOWN_RIGHT_KNIGHT_INV) != 0) {
-                positions.add(new int[]{pos.x-2,pos.y-1});
-            }
-            if ((this.moveSet & LEFT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
-                positions.add(new int[]{pos.x+1,pos.y+2});
-            }
-            if ((this.moveSet & RIGHT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
-                positions.add(new int[]{pos.x-1,pos.y+2});
-            }
-            if ((this.moveSet & DOWN_LEFT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
-                positions.add(new int[]{pos.x+1,pos.y-2});
-            }
-            if ((this.moveSet & DOWN_RIGHT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
-                positions.add(new int[]{pos.x-1,pos.y-2});
+            else if (this.moveSet == PAWN_MOVES >> 16 && this.moveCount != 0) {
+                if (pieces[pos.y+1][pos.x+1] == null) {
+                    positions.add(new int[]{pos.x, pos.y + 1});
+                }
+                if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
+                    thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
+                }
+                if (pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
+                    thingsToTake.add(new int[]{pos.x + 1, pos.y + 1});
+                }
             }
         }
+        else {
         
-        if (((this.moveSet & IS_ONE) != 0 && !isInverted()) || ((this.moveSet & IS_ONE_INV) != 0 && isInverted())) {
-            if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
-                if (!(pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x, pos.y + negate.negate()});
+            if (!isInverted()) {
+                if ((this.moveSet & LEFT_KNIGHT) != 0) {
+                    positions.add(new int[]{pos.x-2,pos.y-1});
+                }
+                if ((this.moveSet & RIGHT_KNIGHT) != 0) {
+                    positions.add(new int[]{pos.x+2,pos.y-1});
+                }
+                if ((this.moveSet & DOWN_LEFT_KNIGHT) != 0) {
+                    positions.add(new int[]{pos.x-2,pos.y+1});
+                }
+                if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0) {
+                    positions.add(new int[]{pos.x+2,pos.y+1});
+                }
+                if ((this.moveSet & LEFT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+                    positions.add(new int[]{pos.x-1,pos.y-2});
+                }
+                if ((this.moveSet & RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+                    positions.add(new int[]{pos.x+1,pos.y-2});
+                }
+                if ((this.moveSet & DOWN_LEFT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+                    positions.add(new int[]{pos.x-1,pos.y+2});
+                }
+                if ((this.moveSet & DOWN_RIGHT_KNIGHT) != 0 && (this.moveSet & IS_KNIGHT_UP) != 0) {
+                    positions.add(new int[]{pos.x+1,pos.y+2});
+                }
+            } else {
+                if ((this.moveSet & LEFT_KNIGHT_INV) != 0) {
+                    positions.add(new int[]{pos.x+2,pos.y+1});
+                }
+                if ((this.moveSet & RIGHT_KNIGHT_INV) != 0) {
+                    positions.add(new int[]{pos.x-2,pos.y+1});
+                }
+                if ((this.moveSet & DOWN_LEFT_KNIGHT_INV) != 0) {
+                    positions.add(new int[]{pos.x+2,pos.y-1});
+                }
+                if ((this.moveSet & DOWN_RIGHT_KNIGHT_INV) != 0) {
+                    positions.add(new int[]{pos.x-2,pos.y-1});
+                }
+                if ((this.moveSet & LEFT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
+                    positions.add(new int[]{pos.x+1,pos.y+2});
+                }
+                if ((this.moveSet & RIGHT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
+                    positions.add(new int[]{pos.x-1,pos.y+2});
+                }
+                if ((this.moveSet & DOWN_LEFT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
+                    positions.add(new int[]{pos.x+1,pos.y-2});
+                }
+                if ((this.moveSet & DOWN_RIGHT_KNIGHT_INV) != 0 && (this.moveSet & IS_KNIGHT_UP_INV) != 0) {
+                    positions.add(new int[]{pos.x-1,pos.y-2});
                 }
             }
-            if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
-                if (!(pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x, pos.y + -negate.negate()});
+            
+            if (((this.moveSet & IS_ONE) != 0 && !isInverted()) || ((this.moveSet & IS_ONE_INV) != 0 && isInverted())) {
+                if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
+                    if (!(pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x, pos.y + negate.negate()});
+                    }
                 }
-            }
-            if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
-                if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x + -negate.negate(), pos.y});
+                if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
+                    if (!(pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x, pos.y + -negate.negate()});
+                    }
                 }
-            }
-            if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
-                if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x + negate.negate(), pos.y});
+                if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
+                    if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x + -negate.negate(), pos.y});
+                    }
                 }
-            }
-            if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
-                if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8 || pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x + -negate.negate(), pos.y + negate.negate()});
+                if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
+                    if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x + negate.negate(), pos.y});
+                    }
                 }
-            }
-            if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
-                positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
-                if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8 || pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
+                if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
+                    if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8 || pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x + -negate.negate(), pos.y + negate.negate()});
+                    }
+                }
+                if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
                     positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
+                    if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8 || pos.y + negate.negate() < 0 || pos.y + negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x + negate.negate(), pos.y + negate.negate()});
+                    }
                 }
-            }
-            if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
-                if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8 || pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x + -negate.negate(), pos.y + -negate.negate()});
+                if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
+                    if (!(pos.x + -negate.negate() < 0 || pos.x + -negate.negate() >= 8 || pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x + -negate.negate(), pos.y + -negate.negate()});
+                    }
                 }
-            }
-            if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
-                if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8 || pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
-                    positions.add(new int[]{pos.x + negate.negate(), pos.y + -negate.negate()});
+                if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
+                    if (!(pos.x + negate.negate() < 0 || pos.x + negate.negate() >= 8 || pos.y + -negate.negate() < 0 || pos.y + -negate.negate() >= 8)) {
+                        positions.add(new int[]{pos.x + negate.negate(), pos.y + -negate.negate()});
+                    }
                 }
-            }
-        } else {
-            if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
-                for (int row = pos.y + negate.negate(); doner.isDone(row); row = row + negate.negate()) {
-                    if (row < 0 || row >= 8) {
-                        continue;
+            } else {
+                if (((this.moveSet & UP) != 0 && !isInverted()) || ((this.moveSet & UP_INV) != 0 && isInverted())) {
+                    for (int row = pos.y + negate.negate(); doner.isDone(row); row = row + negate.negate()) {
+                        if (row < 0 || row >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[row][pos.x];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{pos.x, row});
                     }
-                    ChessPiece p = pieces[row][pos.x];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{pos.x, row});
                 }
-            }
-            if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
-                for (int row = pos.y + -negate.negate(); doner_opp.isDone(row); row = row + -negate.negate()) {
-                    if (row < 0 || row >= 8) {
-                        continue;
+                if (((this.moveSet & DOWN) != 0 && !isInverted()) || ((this.moveSet & DOWN_INV) != 0 && isInverted())) {
+                    for (int row = pos.y + -negate.negate(); doner_opp.isDone(row); row = row + -negate.negate()) {
+                        if (row < 0 || row >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[row][pos.x];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{pos.x, row});
                     }
-                    ChessPiece p = pieces[row][pos.x];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{pos.x, row});
                 }
-            }
-            if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
-                for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
-                    if (col < 0 || col >= 8) {
-                        continue;
+                if (((this.moveSet & RIGHT) != 0 && !isInverted()) || ((this.moveSet & RIGHT_INV) != 0 && isInverted())) {
+                    for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                        if (col < 0 || col >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[pos.y][col];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{col, pos.y});
                     }
-                    ChessPiece p = pieces[pos.y][col];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{col, pos.y});
                 }
-            }
-            if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
-                for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
-                    if (col < 0 || col >= 8) {
-                        continue;
+                if (((this.moveSet & LEFT) != 0 && !isInverted()) || ((this.moveSet & LEFT_INV) != 0 && isInverted())) {
+                    for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                        if (col < 0 || col >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[pos.y][col];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{col, pos.y});
                     }
-                    ChessPiece p = pieces[pos.y][col];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{col, pos.y});
                 }
-            }
-            if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
-                int row = pos.y + negate.negate();
-                for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
-                    if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                        continue;
+                if (((this.moveSet & DIAG) != 0 && !isInverted()) || ((this.moveSet & DIAG_INV) != 0 && isInverted())) {
+                    int row = pos.y + negate.negate();
+                    for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[row][col];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{col,row});
+                        row = row + negate.negate();
                     }
-                    ChessPiece p = pieces[row][col];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{col,row});
-                    row = row + negate.negate();
                 }
-            }
-            if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
-                int row = pos.y + negate.negate();
-                for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
-                    if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                        continue;
+                if (((this.moveSet & LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & LEFT_DIAG_INV) != 0 && isInverted())) {
+                    int row = pos.y + negate.negate();
+                    for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[row][col];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{col,row});
+                        row = row + negate.negate();
                     }
-                    ChessPiece p = pieces[row][col];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{col,row});
-                    row = row + negate.negate();
                 }
-            }
-            if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
-                int row = pos.y - negate.negate();
-                for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
-                    if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                        continue;
+                if (((this.moveSet & DOWN_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_DIAG_INV) != 0 && isInverted())) {
+                    int row = pos.y - negate.negate();
+                    for (int col = pos.x + -negate.negate(); doner_opp.isDone(col); col = col + -negate.negate()) {
+                        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[row][col];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{col,row});
+                        row = row - negate.negate();
                     }
-                    ChessPiece p = pieces[row][col];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{col,row});
-                    row = row - negate.negate();
                 }
-            }
-            if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
-                int row = pos.y - negate.negate();
-                for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
-                    if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                        continue;
+                if (((this.moveSet & DOWN_LEFT_DIAG) != 0 && !isInverted()) || ((this.moveSet & DOWN_LEFT_DIAG_INV) != 0 && isInverted())) {
+                    int row = pos.y - negate.negate();
+                    for (int col = pos.x + negate.negate(); doner.isDone(col); col = col + negate.negate()) {
+                        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+                            continue;
+                        }
+                        ChessPiece p = pieces[row][col];
+                        if (p != null && p.isInverted() != this.isInverted()) {
+                            break;
+                        }
+                        if (p != null && p.isInverted() == this.isInverted()) {
+                            break;
+                        }
+                        positions.add(new int[]{col,row});
+                        row = row - negate.negate();
                     }
-                    ChessPiece p = pieces[row][col];
-                    if (p != null && p.isInverted() != this.isInverted()) {
-                        break;
-                    }
-                    if (p != null && p.isInverted() == this.isInverted()) {
-                        break;
-                    }
-                    positions.add(new int[]{col,row});
-                    row = row - negate.negate();
                 }
             }
         }
