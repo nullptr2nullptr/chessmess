@@ -21,7 +21,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
-    private String MOVE_SOUND_FILE = "src/res/sound/move.wav";
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setFocusable(true);
@@ -110,7 +109,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
             this.pieces[row][col]=(new ChessPiece(types[col],
                 isInverted,
                 icons[col],
-                MOVE_SOUND_FILE,
                 new ChessPosition(col, row),
                 PIECE_WIDTH,
                 PIECE_WIDTH));
@@ -170,7 +168,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
     //Mouse Listener Stuff
     public void mouseClicked(MouseEvent e){
-        ChessPiece.playSound(MOVE_SOUND_FILE);
     }
 
     public void mouseEntered(MouseEvent e){}

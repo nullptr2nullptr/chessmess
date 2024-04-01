@@ -57,14 +57,16 @@ public class ChessPiece {
     int width, height;
     ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
-    static String moveFile;
+    private final static String MOVE_SOUND_FILE = "src/res/sound/move.wav";
+    private final static String PEW_SOUND_FILE = "src/res/sound/pew.wav";
+    private final static String TROMBONE_SOUND_FILE = "src/res/sound/trombone.wav";
+    private final static String LEGO_SOUND_FILE = "src/res/sound/lego.wav";
     boolean isDrawingDots;
     boolean isInverted;
 
-    public ChessPiece(PieceType type, boolean isInverted, String iconPath, String moveFile, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+    public ChessPiece(PieceType type, boolean isInverted, String iconPath, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         this.type = type;
         this.icon = new ImageIcon(iconPath);
-        ChessPiece.moveFile = moveFile;
         this.pos = pos;
         this.width = width;
         this.height = height;
@@ -106,7 +108,6 @@ public class ChessPiece {
 
     public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         // TODO: The playSound() function cannot be called here because of the number of times the paint() function is called
-        // playSound(moveFile);
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
     }
 
