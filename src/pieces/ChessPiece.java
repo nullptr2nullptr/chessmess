@@ -121,7 +121,7 @@ public class ChessPiece {
     }
 
     public void tryPromoteToQueen() {
-        if (this.isPromotable() && pos.y == 0 || pos.y == 7) {
+        if (this.isPromotable()) {
             this.moveSet = QUEEN_MOVES;
             if (isInverted) {
                 this.icon = new ImageIcon("src/res/image/Chess_qdt60.png");
@@ -133,7 +133,13 @@ public class ChessPiece {
     }
 
     public boolean isPromotable() {
-        return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
+        if (this.type == PieceType.PAWN) {
+            if (((pos.y == 0) && (!this.isInverted)) || ((pos.y == 7) && (this.isInverted))) {
+            return true;
+            }
+        } 
+        return false;
+        //return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
     }
 
     public void invertMoveSet() {
