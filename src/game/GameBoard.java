@@ -35,6 +35,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private TreeSet<Integer> keycodes = new TreeSet<Integer>();
     private int mouse_x = 0, mouse_y = 0;
     private int width, height;
+    private boolean isWhiteTurn = true; // White goes first
 
     private PieceSelectedMoves moves = null;
 
@@ -210,6 +211,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
                     piece.tryPromoteToQueen();
+                    isWhiteTurn = !isWhiteTurn;
                 }
             }
             for (int[] xy: this.moves.thingsToTake) {
@@ -221,9 +223,11 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
                     piece.tryPromoteToQueen();
+                    isWhiteTurn = !isWhiteTurn;
                 }
             }
             this.moves = null;
+            
         }
         else {
             for (ChessPiece[] pieces2: pieces) {
@@ -231,8 +235,15 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     if (p == null) {
                         continue;
                     }
+                    if (p.isInverted() && isWhiteTurn)
+                    {
+                        continue;
+                    } else if (!p.isInverted() && !isWhiteTurn) {
+                        continue;
+                    }
                     if (p.isTouching(pos)) {
                         handlePieceClick(p, pos);
+                        p.setRandomMoveSet();
                         break;
                     }
                 }

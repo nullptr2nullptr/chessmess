@@ -110,6 +110,16 @@ public class ChessPiece {
         }
     }
 
+    public void setRandomMoveSet() {
+        int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};
+        int randomIndex = (int) (Math.random() * moveSets.length);
+        this.moveSet = moveSets[randomIndex];
+        System.out.println("Move: " + randomIndex);
+        if (isInverted) {
+            this.invertMoveSet();
+        }
+    }
+
     public void tryPromoteToQueen() {
         if (this.isPromotable() && pos.y == 0 || pos.y == 7) {
             this.moveSet = QUEEN_MOVES;
@@ -180,7 +190,7 @@ public class ChessPiece {
                 positions.add(new int[]{pos.x, pos.y + 2});
             }
             else if (this.moveSet == PAWN_MOVES && this.moveCount != 0) {
-                if (pieces[pos.y-1][pos.x-1] == null) {
+                if (pieces[pos.y-1][pos.x] == null) {
                     positions.add(new int[]{pos.x, pos.y - 1});
                 }
                 if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
