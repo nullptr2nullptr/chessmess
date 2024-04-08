@@ -110,8 +110,18 @@ public class ChessPiece {
         }
     }
 
+    public void setRandomMoveSet() {
+        int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};
+        int randomIndex = (int) (Math.random() * moveSets.length);
+        this.moveSet = moveSets[randomIndex];
+        System.out.println("Move: " + randomIndex);
+        if (isInverted) {
+            this.invertMoveSet();
+        }
+    }
+
     public void tryPromoteToQueen() {
-        if (this.isPromotable() && pos.y == 0 || pos.y == 7) {
+        if (this.isPromotable()) {
             this.moveSet = QUEEN_MOVES;
             if (isInverted) {
                 this.icon = new ImageIcon("src/res/image/Chess_qdt60.png");
@@ -123,7 +133,13 @@ public class ChessPiece {
     }
 
     public boolean isPromotable() {
-        return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
+        if (this.type == PieceType.PAWN) {
+            if (((pos.y == 0) && (!this.isInverted)) || ((pos.y == 7) && (this.isInverted))) {
+            return true;
+            }
+        } 
+        return false;
+        //return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
     }
 
     public void invertMoveSet() {
@@ -180,7 +196,7 @@ public class ChessPiece {
                 positions.add(new int[]{pos.x, pos.y + 2});
             }
             else if (this.moveSet == PAWN_MOVES && this.moveCount != 0) {
-                if (pieces[pos.y-1][pos.x-1] == null) {
+                if (pieces[pos.y-1][pos.x] == null) {
                     positions.add(new int[]{pos.x, pos.y - 1});
                 }
             }

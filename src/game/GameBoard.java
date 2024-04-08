@@ -29,6 +29,8 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     public static int PIECE_LENGTH = 60;
     private final ChessPiece[][] pieces = new ChessPiece[8][8];
     private int mouse_x = 0, mouse_y = 0;
+    private int width, height;
+    private boolean isWhiteTurn = true; // White goes first
 
     private PieceSelectedMoves moves = null;
 
@@ -212,6 +214,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     piece.pos = pos;
                     isWhiteTurn = !isWhiteTurn;
                     piece.tryPromoteToQueen();
+                    isWhiteTurn = !isWhiteTurn;
                 }
             }
             for (int[] xy : this.moves.thingsToTake) {
@@ -224,6 +227,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     piece.pos = pos;
                     isWhiteTurn = !isWhiteTurn;
                     piece.tryPromoteToQueen();
+                    isWhiteTurn = !isWhiteTurn;
                 }
             }
             this.moves = null;
