@@ -136,7 +136,7 @@ public class ChessPiece {
 
     public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         // TODO: The playSound() function cannot be called here because of the number of times the paint() function is called
-        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_WIDTH, pos.y * GameBoard.PIECE_WIDTH, width, height, p);
+        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH, width, height, p);
     }
 
     public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
