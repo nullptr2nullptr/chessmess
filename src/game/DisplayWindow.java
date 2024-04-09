@@ -1,8 +1,7 @@
 package game;
 
-import java.awt.Container;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 public class DisplayWindow extends JFrame {
     private Container c;
