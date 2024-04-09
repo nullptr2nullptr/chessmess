@@ -199,6 +199,13 @@ public class ChessPiece {
                 if (pieces[pos.y-1][pos.x] == null) {
                     positions.add(new int[]{pos.x, pos.y - 1});
                 }
+            }
+            else if (this.moveSet == PAWN_MOVES >> 16 && this.moveCount != 0) {
+                if (pieces[pos.y+1][pos.x+1] == null) {
+                    positions.add(new int[]{pos.x, pos.y + 1});
+                }
+            }
+            if (this.moveSet == PAWN_MOVES) {
                 if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x - 1, pos.y - 1});
                 }
@@ -206,10 +213,7 @@ public class ChessPiece {
                     thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
                 }
             }
-            else if (this.moveSet == PAWN_MOVES >> 16 && this.moveCount != 0) {
-                if (pieces[pos.y+1][pos.x+1] == null) {
-                    positions.add(new int[]{pos.x, pos.y + 1});
-                }
+            else if (this.moveSet == PAWN_MOVES >> 16) {
                 if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
                 }
