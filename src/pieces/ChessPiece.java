@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.LineUnavailableException;
@@ -19,6 +20,7 @@ import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 
 import game.GameBoard;
+import pieces.PieceSelectedMoves.CheckState;
 
 import java.awt.Graphics;
 import java.awt.Color;
@@ -75,6 +77,9 @@ public class ChessPiece {
     boolean isDrawingDots;
     boolean isInverted;
     public int moveCount;
+    boolean isKing;
+    Color placeColor = new Color(175, 215, 250);
+    Color takeColor = new Color(240, 155, 129);
 
     public ChessPiece(PieceType type, boolean isInverted, String iconPath, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         this.type = type;
@@ -84,6 +89,7 @@ public class ChessPiece {
         this.height = height;
         this.isDrawingDots = false;
         this.isInverted = isInverted;
+        this.isKing = false;
 
         switch (type) {
             case ROOK:
@@ -93,6 +99,7 @@ public class ChessPiece {
                 this.moveSet = PAWN_MOVES;
                 break;
             case KING:
+                this.isKing = true;
                 this.moveSet = KING_MOVES;
                 break;
             case QUEEN:
@@ -155,7 +162,7 @@ public class ChessPiece {
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH, width, height, p);
     }
 
-    public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
+    public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces, boolean looking){
         ArrayList<int[]> positions = new ArrayList<>();
         ArrayList<int[]> thingsToTake = new ArrayList<>();
         Negator negate;
@@ -206,18 +213,18 @@ public class ChessPiece {
                 }
             }
             if (this.moveSet == PAWN_MOVES) {
-                if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
+                if (pos.x-1 > 0 && pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x - 1, pos.y - 1});
                 }
-                if (pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
+                if (pos.x+1 < 8 && pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
                 }
             }
             else if (this.moveSet == PAWN_MOVES >> 16) {
-                if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
+                if (pos.x-1 > 0 && pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
                 }
-                if (pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
+                if (pos.x+1 < 8 && pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x + 1, pos.y + 1});
                 }
             }
@@ -456,8 +463,8 @@ public class ChessPiece {
                 }
             }
         }
-        ArrayList<int[]> new_positions = new ArrayList<>();
-        ArrayList<int[]> new_thingsToTake = new ArrayList<>();
+        HashSet<int[]> new_positions = new HashSet<>();
+        HashSet<int[]> new_thingsToTake = new HashSet<>();
         for (int[] xy: positions) {
             if (xy[1] >= 8 || xy[1] < 0 || xy[0] >= 8 || xy[0] < 0) {
                 continue;
@@ -495,7 +502,7 @@ public class ChessPiece {
                 }
             }
             if (!skip) {
-                colors.put(new ChessPosition(xy[0], xy[1]), new Color(175, 215, 250));
+                colors.put(new ChessPosition(xy[0], xy[1]), this.placeColor);
             }
         }
 
@@ -516,11 +523,60 @@ public class ChessPiece {
                 }
             }
             if (!skip) {
-                colors.put(new ChessPosition(xy[0], xy[1]), new Color(240, 155, 129));
+                colors.put(new ChessPosition(xy[0], xy[1]), this.takeColor);
             }
         }
         isDrawingDots = false;
-        return new PieceSelectedMoves(new_positions, new_thingsToTake, this);
+
+        CheckState c = CheckState.SAFE;
+        if (this.isKing && !looking) {
+            HashSet<int[]> attackers = new HashSet<>();
+            HashSet<int[]> places = new HashSet<>();
+            for (ChessPiece[] row: pieces) {
+                for (ChessPiece p: row) {
+                    if (p == null || p == this) {
+                        continue;
+                    }
+                    p.isDrawingDots = true;
+                    PieceSelectedMoves res = p.preparePaint(new HashMap<>(), pieces, true);
+                    HashSet<int[]> ttt_ = res.thingsToTake;
+                    HashSet<int[]> pos_ = res.positions;
+                    p.isDrawingDots = false;
+                    if (ttt_ == null || pos_ == null) {
+                        continue;
+                    }
+                    attackers.addAll(ttt_);
+                    places.addAll(pos_);
+                }
+            }
+            HashSet<int[]> new_positions_checker = new HashSet<>();
+            for (int[] pos: new_positions) {
+                for (int[] place: places) {
+                    if (place[0] != pos[0] && place[1] != pos[1]) {
+                        new_positions.add(pos);
+                    }
+                }
+            }
+            for (int[] xy: attackers) {
+                boolean inCheck = (xy[0] == this.pos.x && xy[1] == this.pos.y);
+                if (inCheck) {
+                    colors.clear();
+                    if (new_positions_checker.isEmpty() && new_thingsToTake.isEmpty()) {
+                        c = CheckState.MATE;
+                        System.out.println("Checkmate");
+                    }
+                    else {
+                        c = CheckState.CHECK;
+                        System.out.println("Check");
+                    }
+                }
+            }
+            new_positions = new_positions_checker;
+            for (int[] xy: new_positions) {
+                colors.put(new ChessPosition(xy[0], xy[1]), this.placeColor);
+            }
+        }
+        return new PieceSelectedMoves(new_positions, new_thingsToTake, this, c);
     }
 
     public boolean isTouching(ChessPosition mouse_pos){
