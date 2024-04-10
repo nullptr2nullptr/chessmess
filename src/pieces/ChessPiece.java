@@ -559,10 +559,12 @@ public class ChessPiece {
                     colors.clear();
                     if (new_positions_checker.isEmpty() && new_thingsToTake.isEmpty()) {
                         c = CheckState.MATE;
+                        playSound(Sounds.TROMBONE_SOUND_FILE);
                         System.out.println("Checkmate");
                     }
                     else {
                         c = CheckState.CHECK;
+                        playSound(Sounds.CHECK_SOUND_FILE);
                         System.out.println("Check");
                     }
                 }
