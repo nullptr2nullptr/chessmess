@@ -70,10 +70,6 @@ public class ChessPiece {
     int width, height;
     public ChessPosition pos;
     double v_x = 0, v_y = 0, a_x = 0, a_y = .0005;
-    private final static String MOVE_SOUND_FILE = "src/res/sound/move.wav";
-    private final static String PEW_SOUND_FILE = "src/res/sound/pew.wav";
-    private final static String TROMBONE_SOUND_FILE = "src/res/sound/trombone.wav";
-    private final static String LEGO_SOUND_FILE = "src/res/sound/lego.wav";
     boolean isDrawingDots;
     boolean isInverted;
     public int moveCount;
