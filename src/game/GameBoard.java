@@ -1,9 +1,6 @@
 package game;
 
-import pieces.ChessPiece;
-import pieces.ChessPosition;
-import pieces.PieceSelectedMoves;
-import pieces.PieceType;
+import pieces.*;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -183,6 +180,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
 
+
+
+
     //Mouse Listener Stuff
     public void mouseClicked(MouseEvent e) {
     }
@@ -208,8 +208,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     piece.moveCount++;
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
+                    ChessPiece.playSound(Sounds.MOVE_SOUND_FILE);
                     piece.pos = pos;
-                    isWhiteTurn = !isWhiteTurn;
+                    isWhiteTurn = !isWhiteTurn; // Changing the turn once someone has moved.
                     piece.tryPromoteToQueen();
                 }
             }
@@ -220,8 +221,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     System.out.println(pieceAt);
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
+                    ChessPiece.playSound(Sounds.LEGO_SOUND_FILE);
                     piece.pos = pos;
-                    isWhiteTurn = !isWhiteTurn;
+                    isWhiteTurn = !isWhiteTurn; // Changing the turn once someone has moved.
                     piece.tryPromoteToQueen();
                 }
             }
