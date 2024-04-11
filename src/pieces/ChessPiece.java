@@ -24,6 +24,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 public class ChessPiece {
+    // Constants representing different move directions and types of chess pieces
     static int BASE = 0b1000000000000000000000000000000;
     static int UP = BASE;
     static int RIGHT = BASE >> 1;
@@ -85,6 +86,7 @@ public class ChessPiece {
         this.isDrawingDots = false;
         this.isInverted = isInverted;
 
+        // Move sets
         switch (type) {
             case ROOK:
                 this.moveSet = ROOK_MOVES;
@@ -105,11 +107,13 @@ public class ChessPiece {
                 this.moveSet = KNIGHT_MOVES;
                 break;
         };
+        // Move inversion check
         if (isInverted) {
             this.invertMoveSet();
         }
     }
 
+    // Logic for random moves
     public void setRandomMoveSet() {
         int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};
         int randomIndex = (int) (Math.random() * moveSets.length);
@@ -120,6 +124,7 @@ public class ChessPiece {
         }
     }
 
+    // Pawn promotion to Queen
     public void tryPromoteToQueen() {
         if (this.isPromotable()) {
             this.moveSet = QUEEN_MOVES;
@@ -139,7 +144,7 @@ public class ChessPiece {
             }
         } 
         return false;
-        //return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
+        // return moveSet == PAWN_MOVES || moveSet == PAWN_MOVES >> 16;
     }
 
     public void invertMoveSet() {
@@ -147,12 +152,11 @@ public class ChessPiece {
     }
 
     public boolean isInverted() {
-        return this.isInverted; //(this.moveSet & 0b00000000000000001111111111111111) == this.moveSet;
+        return this.isInverted; // (this.moveSet & 0b00000000000000001111111111111111) == this.moveSet;
     }
 
-    public void paint(Graphics g, GameBoard p) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-        // TODO: The playSound() function cannot be called here because of the number of times the paint() function is called
-        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH, width, height, p);
+    public void paint(Graphics g, GameBoard p)  {
+        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH + GameBoard.offset, width, height, p);
     }
 
     public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
@@ -187,6 +191,7 @@ public class ChessPiece {
         }
 
         if (this.moveSet == PAWN_MOVES || this.moveSet == PAWN_MOVES >> 16) {
+            // Move set positions
             if (this.moveSet == PAWN_MOVES && this.moveCount == 0) {
                 positions.add(new int[]{pos.x, pos.y - 1});
                 positions.add(new int[]{pos.x, pos.y - 2});
@@ -500,6 +505,7 @@ public class ChessPiece {
         }
 
         for (int[] xy: new_thingsToTake) {
+            // Taking pieces
             boolean skip = false;
             for (ChessPiece[] row: pieces) {
                 for (ChessPiece p: row) {
@@ -527,7 +533,7 @@ public class ChessPiece {
         return pos.x == mouse_pos.x && pos.y == mouse_pos.y;
     }
 
-
+    // Audio
     public static void playSound(String sound){
         try{
             AudioInputStream s = AudioSystem.getAudioInputStream(new File(sound));
@@ -540,6 +546,7 @@ public class ChessPiece {
         }
     }
 
+    // Strings and drawing potential moves
     public String toString() {
         return type +" at " + pos.x + "," + pos.y + " with moveset " + moveSet;
     }

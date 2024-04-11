@@ -8,11 +8,9 @@ import pieces.PieceType;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
-import java.awt.Graphics;
-import java.awt.Dimension;
-import java.awt.Color;
+import java.awt.*;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
@@ -30,16 +28,18 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private final ChessPiece[][] pieces = new ChessPiece[8][8];
     private int mouse_x = 0, mouse_y = 0;
     private boolean isWhiteTurn = true; // White goes first
-
     private PieceSelectedMoves moves = null;
+    private int blackScore = 0;
+    private int whiteScore = 0;
+    public static int offset = 26;
+    JLabel score = new JLabel("White Score: " + getWhiteScore() + " - Black Score: " + getBlackScore());
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setFocusable(true);
-        int width = PIECE_LENGTH * 8;
-        int height = PIECE_LENGTH * 8;
-        setPreferredSize(new Dimension(width, height));
+        setPreferredSize(new Dimension(PIECE_LENGTH * 8, (PIECE_LENGTH * 8) + offset));
         addMouseListener(this);
         addMouseMotionListener(this);
+        this.add(score);
 
         // Adding black pieces
         addMostPiecesLeftToRight(new String[]{"src/res/image/Chess_rdt60.png",
@@ -129,6 +129,14 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         }
     }
 
+    public int getWhiteScore(){
+        return whiteScore;
+    }
+
+    public int getBlackScore(){
+        return blackScore;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -167,7 +175,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 for (ChessPosition key : colors.keySet()) {
                     if (p.x == key.x && p.y == key.y) {
                         g.setColor(colors.get(key));
-                        g.fillRect(column * PIECE_LENGTH, row * PIECE_LENGTH, PIECE_LENGTH, PIECE_LENGTH);
+                        g.fillRect(column * PIECE_LENGTH, row * PIECE_LENGTH + offset, PIECE_LENGTH, PIECE_LENGTH);
                         override = true;
                         break;
                     }
@@ -177,24 +185,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 }
                 if ((row + column) % 2 == 0) g.setColor(new Color(240, 217, 181));
                 else g.setColor(new Color(181, 136, 99));
-                g.fillRect(column * PIECE_LENGTH, row * PIECE_LENGTH, PIECE_LENGTH, PIECE_LENGTH);
+                g.fillRect(column * PIECE_LENGTH, row * PIECE_LENGTH + offset, PIECE_LENGTH, PIECE_LENGTH);
             }
         }
-    }
-
-
-    //Mouse Listener Stuff
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    public void mouseExited(MouseEvent e) {
-    }
-
-    public void mousePressed(MouseEvent e) {
-
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -221,6 +214,11 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
+                    if (isWhiteTurn){
+                        whiteScore ++;
+                    } else{
+                        blackScore ++;
+                    }
                     isWhiteTurn = !isWhiteTurn;
                     piece.tryPromoteToQueen();
                 }
@@ -242,11 +240,30 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         repaint();
     }
 
+//    private void printScores(Graphics g){
+//        g.setColor(Color.BLACK);
+//        g.drawString("White: " + whiteScore + " - Black: " + blackScore, 0, 0);
+//        repaint();
+//    }
+
     private void handlePieceClick(ChessPiece p) {
         p.drawDots();
     }
 
-    //Mouse Motion Listener stuff
+    // Mouse Listener Other Functions
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    // Mouse Motion Listener Other Functions
     public void mouseDragged(MouseEvent e) {
         mouse_x = e.getX();
         mouse_y = e.getY();
@@ -257,11 +274,11 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         mouse_y = e.getY();
     }
 
-    //Action Listener Stuff
+    // Action Listener Other Function
     public void actionPerformed(ActionEvent e) {
     }
 
-    //Item Listener Stuff
+    // Item Listener Other Function
     public void itemStateChanged(ItemEvent e) {
     }
 }

@@ -4,15 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DisplayWindow extends JFrame {
-    private Container c;
+    private Container container;
 
     public DisplayWindow() {
         super("Display");
-        c = this.getContentPane();
+        container = this.getContentPane();
     }
 
-    public void addPanel(JPanel p) {
-        c.add(p);
+    public void addPanel(JPanel panel) {
+        container.add(panel);
     }
 
     public void showFrame() {

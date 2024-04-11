@@ -6,9 +6,9 @@ import java.io.IOException;
 
 public class Chessmess {
     public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-        DisplayWindow d = new DisplayWindow();
-        GameBoard p = new GameBoard();
-        d.addPanel(p);
-        d.showFrame();
+        DisplayWindow displayWindow = new DisplayWindow();
+        GameBoard board = new GameBoard();
+        displayWindow.addPanel(board);
+        displayWindow.showFrame();
     }
 }
