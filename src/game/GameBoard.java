@@ -32,7 +32,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private int blackScore = 0;
     private int whiteScore = 0;
     public static int offset = 26;
-    JLabel score = new JLabel("White Score: " + getWhiteScore() + " - Black Score: " + getBlackScore());
+    JLabel score = new JLabel("White Score: " + whiteScore + " - Black Score: " + blackScore);
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setFocusable(true);
@@ -129,14 +129,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         }
     }
 
-    public int getWhiteScore(){
-        return whiteScore;
-    }
-
-    public int getBlackScore(){
-        return blackScore;
-    }
-
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -165,6 +157,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 }
             }
         }
+        score.setText("White Score: " + whiteScore + " - Black Score: " + blackScore);
     }
 
     private void drawCheckerboard(Graphics g, HashMap<ChessPosition, Color> colors) {
@@ -215,10 +208,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
                     if (isWhiteTurn){
-                        // whiteScore += getScore(pieceAt);
-                        whiteScore ++;
+                        whiteScore += getScore(pieceAt);
+                        System.out.println(whiteScore);
                     } else{
-                        blackScore ++;
+                        blackScore += getScore(pieceAt);
                     }
                     isWhiteTurn = !isWhiteTurn;
                     piece.tryPromoteToQueen();
@@ -243,8 +236,20 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
     private int getScore(ChessPiece piece) {
         switch (piece.getType()) {
-
+            case PAWN -> {
+                return 1;
+            }
+            case KNIGHT, BISHOP -> {
+                return 3;
+            }
+            case ROOK -> {
+                return 5;
+            }
+            case QUEEN -> {
+                return 9;
+            }
         }
+        return 0;
     }
 
 //    private void printScores(Graphics g) {
