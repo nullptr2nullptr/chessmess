@@ -115,6 +115,10 @@ public class ChessPiece {
         }
     }
 
+    public PieceType getType() {
+        return this.type;
+    }
+
     // Logic for random moves
     public void setRandomMoveSet() {
         int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};

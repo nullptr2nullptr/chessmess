@@ -215,6 +215,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[pos.y][pos.x] = piece;
                     piece.pos = pos;
                     if (isWhiteTurn){
+                        // whiteScore += getScore(pieceAt);
                         whiteScore ++;
                     } else{
                         blackScore ++;
@@ -240,7 +241,13 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         repaint();
     }
 
-//    private void printScores(Graphics g){
+    private int getScore(ChessPiece piece) {
+        switch (piece.getType()) {
+
+        }
+    }
+
+//    private void printScores(Graphics g) {
 //        g.setColor(Color.BLACK);
 //        g.drawString("White: " + whiteScore + " - Black: " + blackScore, 0, 0);
 //        repaint();
