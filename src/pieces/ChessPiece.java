@@ -23,6 +23,8 @@ import game.GameBoard;
 import java.awt.Graphics;
 import java.awt.Color;
 
+import static game.GameBoard.offset;
+
 public class ChessPiece {
     // Constants representing different move directions and types of chess pieces
     static int BASE = 0b1000000000000000000000000000000;
@@ -156,7 +158,7 @@ public class ChessPiece {
     }
 
     public void paint(Graphics g, GameBoard p)  {
-        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH + GameBoard.offset, width, height, p);
+        g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH + offset, width, height, p);
     }
 
     public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){

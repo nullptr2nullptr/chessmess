@@ -193,7 +193,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     public void mouseReleased(MouseEvent e) {
         mouse_x = e.getX();
         mouse_y = e.getY();
-        ChessPosition pos = new ChessPosition(mouse_x / PIECE_LENGTH, mouse_y / PIECE_LENGTH);
+        ChessPosition pos = new ChessPosition(mouse_x / PIECE_LENGTH, (mouse_y - offset) / PIECE_LENGTH);
         if (this.moves != null) {
             ChessPiece piece = this.moves.p;
             for (int[] xy : this.moves.positions) {
