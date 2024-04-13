@@ -7,7 +7,7 @@ public class DisplayWindow extends JFrame {
     private Container container;
 
     public DisplayWindow() {
-        super("Display");
+        super("ςλεʂʂɱεʂʂ");
         container = this.getContentPane();
     }
 

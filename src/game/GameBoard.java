@@ -35,12 +35,30 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     JLabel score = new JLabel("White Score: " + whiteScore + " - Black Score: " + blackScore);
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-        setFocusable(true);
+        setLayout(new BorderLayout());
         setPreferredSize(new Dimension(PIECE_LENGTH * 8, (PIECE_LENGTH * 8) + offset));
+
+        // Top panel for reset button and scores
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(this);
+        resetButton.setFont(new Font("Arial", Font.BOLD, 10));
+        resetButton.setPreferredSize(new Dimension(75, 20));
+        topPanel.add(resetButton);
+        topPanel.add(Box.createHorizontalGlue());
+        score.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(score);
+        add(topPanel, BorderLayout.NORTH);
+
+        setFocusable(true);
         addMouseListener(this);
         addMouseMotionListener(this);
-        this.add(score);
 
+        initializePieces();
+    }
+
+    private void initializePieces() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         // Adding black pieces
         addMostPiecesLeftToRight(new String[]{"src/res/image/Chess_rdt60.png",
                         "src/res/image/Chess_ndt60.png",
@@ -188,7 +206,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         mouse_y = e.getY();
         ChessPosition pos = new ChessPosition(mouse_x / PIECE_LENGTH, (mouse_y - offset) / PIECE_LENGTH);
         if (this.moves != null) {
-            ChessPiece piece = this.moves.p;
+            ChessPiece piece = this.moves.piece;
             for (int[] xy : this.moves.positions) {
                 if (xy[0] == pos.x && xy[1] == pos.y) {
                     piece.moveCount++;
@@ -252,11 +270,27 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         return 0;
     }
 
-//    private void printScores(Graphics g) {
-//        g.setColor(Color.BLACK);
-//        g.drawString("White: " + whiteScore + " - Black: " + blackScore, 0, 0);
-//        repaint();
-//    }
+    private void resetGame() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        // Reset scores
+        whiteScore = 0;
+        blackScore = 0;
+
+        // Remove all pieces from the board
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                pieces[i][j] = null;
+            }
+        }
+
+        // Reinitialize pieces
+        initializePieces();
+
+        // Set white to go first
+        isWhiteTurn = true;
+
+        // Repaint panel
+        repaint();
+    }
 
     private void handlePieceClick(ChessPiece p) {
         p.drawDots();
@@ -287,7 +321,12 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
     // Action Listener Other Function
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
+        try {
+            resetGame();
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
     }
 
     // Item Listener Other Function
