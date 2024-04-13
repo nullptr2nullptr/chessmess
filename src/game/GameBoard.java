@@ -254,16 +254,19 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
     private int getScore(ChessPiece piece) {
         switch (piece.getType()) {
-            case PAWN -> {
+            case PAWN: {
                 return 1;
             }
-            case KNIGHT, BISHOP -> {
+            case KNIGHT: { 
                 return 3;
             }
-            case ROOK -> {
+            case BISHOP: { 
+                return 3;
+            }
+            case ROOK: {
                 return 5;
             }
-            case QUEEN -> {
+            case QUEEN: {
                 return 9;
             }
         }
