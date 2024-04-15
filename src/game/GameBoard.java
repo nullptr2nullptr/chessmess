@@ -135,9 +135,14 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (piece == null) {
                     continue;
                 }
-                PieceSelectedMoves moves = piece.preparePaint(colors, pieces);
-                if (this.moves == null) {
-                    this.moves = moves;
+                try {
+                    PieceSelectedMoves moves = piece.preparePaint(colors, pieces);
+                    if (this.moves == null) {
+                        this.moves = moves;
+                    }
+                } catch (CloneNotSupportedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
             }
         }
