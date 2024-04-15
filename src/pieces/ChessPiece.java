@@ -202,19 +202,27 @@ public class ChessPiece {
                 }
             }
             if (this.moveSet == PAWN_MOVES) {
-                if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
+                if (pos.x > 0) {
+                    if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x - 1, pos.y - 1});
+                    }
                 }
-                if (pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
-                    thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
+                if (pos.x < 7) {
+                    if (pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
+                        thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
+                    }
                 }
             }
             else if (this.moveSet == PAWN_MOVES >> 16) {
-                if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
-                    thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
+                if (pos.x > 0) {
+                    if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
+                        thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
+                    }
                 }
-                if (pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
-                    thingsToTake.add(new int[]{pos.x + 1, pos.y + 1});
+                if (pos.x < 7) {
+                    if (pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
+                        thingsToTake.add(new int[]{pos.x + 1, pos.y + 1});
+                    }
                 }
             }
         }
@@ -565,6 +573,10 @@ public class ChessPiece {
             v_y = -1 * v_y;
             y = height - this.height;
         }*/
+    }
+
+    public PieceType getType() {
+        return this.type;
     }
 
     interface Negator {

@@ -222,6 +222,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     ChessPiece.playSound(Sounds.LEGO_SOUND_FILE);
+                    //Check if the piece is a king
+                    if (pieceAt.getType() == PieceType.KING) {
+                        System.out.println("Game Over");
+                    }
                     piece.pos = pos;
                     isWhiteTurn = !isWhiteTurn; // Changing the turn once someone has moved.
                     piece.tryPromoteToQueen();
