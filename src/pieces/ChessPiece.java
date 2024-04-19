@@ -663,6 +663,7 @@ public class ChessPiece implements Cloneable {
                         if (moves == null) {
                             continue;
                         }
+                        System.out.println("moveset of "+piece+"c="+moves.isCheck+" p="+moves.positions.size());
                         for (int[] pos: moves.positions) {
                             ChessPiece[][] pieces_copy = new ChessPiece[8][8];
                             for (int r=0; r<8; r++){
@@ -676,6 +677,7 @@ public class ChessPiece implements Cloneable {
                             // Move one of our pieces to that spot
                             pieces_copy[pos[1]][pos[0]] = pieces_copy[piece.pos.y][piece.pos.x];
                             pieces_copy[pos[1]][pos[0]].pos = new ChessPosition(pos[0], pos[1]);
+                            System.out.println("TRYING TO MOVE "+piece+"TO x="+pos[0]+" y="+pos[1]);
                             ArrayList<ChessPiece> still_attacking = new ArrayList<>();
                             // Check if they are still attacking us
                             for (ChessPiece[] r: pieces_copy) {
@@ -698,6 +700,7 @@ public class ChessPiece implements Cloneable {
                                     }
                                 }
                             }
+                            System.out.println(still_attacking.size());
                             if (!still_attacking.isEmpty()) {
                                 inCheckmate = false;
                                 break;
