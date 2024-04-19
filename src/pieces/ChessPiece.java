@@ -201,11 +201,15 @@ public class ChessPiece implements Cloneable {
             // Move set positions
             if (this.moveSet == PAWN_MOVES && this.moveCount == 0) {
                 positions.add(new int[]{pos.x, pos.y - 1});
-                positions.add(new int[]{pos.x, pos.y - 2});
+                if (pieces[pos.y-1][pos.x] == null) { // Don't jump over
+                    positions.add(new int[]{pos.x, pos.y - 2});
+                }
             }
             else if (this.moveSet == PAWN_MOVES >> 16 && this.moveCount == 0) {
                 positions.add(new int[]{pos.x, pos.y + 1});
-                positions.add(new int[]{pos.x, pos.y + 2});
+                if (pieces[pos.y+1][pos.x] == null) { // Don't jump over
+                    positions.add(new int[]{pos.x, pos.y + 2});
+                }
             }
             else if (this.moveSet == PAWN_MOVES && this.moveCount != 0) {
                 if (pos.y > 0 && pieces[pos.y-1][pos.x] == null) {
