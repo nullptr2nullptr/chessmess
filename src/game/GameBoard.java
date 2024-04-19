@@ -300,7 +300,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                         statusLabel.setText("Status: " + getPlayerName() + " wins!");
                         ChessPiece.playSound(Sounds.TROMBONE_SOUND_FILE);
                     } else if (moves != null && moves.isCheck) {
-                        statusLabel.setText("Status: Check - " + getPlayerName() + " is in check.");
+                        statusLabel.setText("Status: " + getPlayerName() + " is in check");
                     }
                 } catch (CloneNotSupportedException e_) {
                     // TODO Auto-generated catch block
