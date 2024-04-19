@@ -821,10 +821,6 @@ public class ChessPiece implements Cloneable {
         }*/
     }
 
-    public PieceType getType() {
-        return this.type;
-    }
-
     interface Negator {
         int negate();
     }
