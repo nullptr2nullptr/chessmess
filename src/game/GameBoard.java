@@ -32,7 +32,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private ChessPiece activeKing;
     private ChessPiece otherKing;
     JLabel score = new JLabel("White: " + whiteScore + " - Black: " + blackScore);
-    JLabel statusLabel;
+    JLabel statusLabel, playerLabel;
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setLayout(new BorderLayout());
@@ -62,7 +62,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         topPanel.add(score, gbc);
 
         // Status label
-        statusLabel = new JLabel("Status: Game Active");
+        statusLabel = new JLabel("Status: Game Normal");
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -71,7 +71,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         topPanel.add(statusLabel, gbc);
 
         // Player label
-        JLabel playerLabel = new JLabel("Player: White");
+        playerLabel = new JLabel("Player: White");
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -287,6 +287,11 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
             }
             if (didAMove) {
                 isWhiteTurn = !isWhiteTurn; // Changing the turn once someone has moved.
+                if(isWhiteTurn){
+                    playerLabel.setText("Player: White");
+                } else {
+                    playerLabel.setText("Player: Black");
+                }
                 piece.tryPromoteToQueen();
                 ChessPiece tmp = this.activeKing;
                 this.activeKing = this.otherKing;
