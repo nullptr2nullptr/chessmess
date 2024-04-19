@@ -10,9 +10,9 @@ public class PieceSelectedMoves {
     public String msg;
  
     public PieceSelectedMoves(HashSet<int[]> positions, HashSet<int[]> thingsToTake, ChessPiece piece, boolean isCheck, boolean isMate, String message, boolean isPinned) {
-        this.positions=positions;
-        this.thingsToTake=thingsToTake;
-        this.piece=piece;
+        this.positions = positions;
+        this.thingsToTake = thingsToTake;
+        this.piece = piece;
         this.msg = message;
         this.isMate = isMate;
         this.isCheck = isCheck;

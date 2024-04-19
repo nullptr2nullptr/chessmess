@@ -43,7 +43,7 @@ public class GameMenu extends JFrame implements ActionListener {
         startButtonConstraints.gridx = 0;
         startButtonConstraints.gridy = 1;
         startButtonConstraints.anchor = GridBagConstraints.CENTER;
-        startButtonConstraints.insets = new Insets(0, 10, 10, 5); // Add padding
+        startButtonConstraints.insets = new Insets(0, 10, 10, 10); // Add padding
         panel.add(startButton, startButtonConstraints);
 
         // Add Exit button

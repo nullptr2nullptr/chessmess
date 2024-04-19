@@ -872,29 +872,6 @@ public class ChessPiece implements Cloneable {
         this.isDrawingDots = !this.isDrawingDots;
     }
 
-    public void update(int delay, int width, int height){
-        //Note delay is 16 ms
-        /*y += v_y * delay;
-        x += v_x * delay;
-        v_y += a_y * delay;
-        v_x += a_x * delay;
-
-        if(x <= 0){
-            v_x = -1 * v_x;
-            x = 0;
-        }else if((x + this.width) >= width){
-            v_x = -1 * v_x;
-            x = width - this.width;
-        }
-        if(y <= 0){
-            v_y = -1 * v_y;
-            y = 0;
-        }else if((y + this.height) >= height){
-            v_y = -1 * v_y;
-            y = height - this.height;
-        }*/
-    }
-
     interface Negator {
         int negate();
     }

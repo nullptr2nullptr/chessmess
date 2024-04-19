@@ -31,23 +31,53 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     public static int offset = 26;
     private ChessPiece activeKing;
     private ChessPiece otherKing;
-    JLabel score = new JLabel("White Score: " + whiteScore + " - Black Score: " + blackScore);
+    JLabel score = new JLabel("White: " + whiteScore + " - Black: " + blackScore);
+    JLabel statusLabel;
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(PIECE_LENGTH * 8, (PIECE_LENGTH * 8) + offset));
 
-        // Top panel for reset button and scores
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+        // Top panel for reset button, scores, status, and current player
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        // Reset button
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(this);
         resetButton.setFont(new Font("Arial", Font.BOLD, 10));
         resetButton.setPreferredSize(new Dimension(75, 20));
-        topPanel.add(resetButton);
-        topPanel.add(Box.createHorizontalGlue());
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 10); // Add insets for spacing
+        topPanel.add(resetButton, gbc);
+
+        // Scores
         score.setHorizontalAlignment(SwingConstants.CENTER);
-        topPanel.add(score);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.weightx = 1;
+        topPanel.add(score, gbc);
+
+        // Status label
+        statusLabel = new JLabel("Status: Game Active");
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.weightx = 0;
+        gbc.insets = new Insets(0, 10, 0, 10); // Add insets for spacing
+        topPanel.add(statusLabel, gbc);
+
+        // Player label
+        JLabel playerLabel = new JLabel("Player: White");
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(0, 10, 0, 10); // Add insets for spacing
+        topPanel.add(playerLabel, gbc);
+
         add(topPanel, BorderLayout.NORTH);
 
         setFocusable(true);
@@ -56,6 +86,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
         initializePieces();
     }
+
 
     private void initializePieces() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         // Adding black pieces
@@ -193,7 +224,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 }
             }
         }
-        score.setText("White Score: " + whiteScore + " - Black Score: " + blackScore);
+        score.setText("White: " + whiteScore + " - Black: " + blackScore);
     }
 
     private void drawCheckerboard(Graphics g, HashMap<ChessPosition, Color> colors) {
@@ -260,22 +291,22 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 ChessPiece tmp = this.activeKing;
                 this.activeKing = this.otherKing;
                 this.otherKing = tmp;
+                statusLabel.setText("Status: Game Normal");
                 try {
                     System.out.println("DEBUG: active king is "+this.activeKing);
                     this.activeKing.drawDots();
                     PieceSelectedMoves moves = this.activeKing.calculateMoveset(new HashMap<>(), pieces, false);
                     if (moves != null && moves.isMate) {
-                        System.out.println("INFO: "+getPlayerName()+" GOT CHECKMATED.");
-                    }
-                    if (moves != null && moves.isCheck) {
-                        System.out.println("INFO: "+getPlayerName()+" IS IN CHECK.");
+                        statusLabel.setText("Status: " + getPlayerName() + " wins!");
+                        ChessPiece.playSound(Sounds.TROMBONE_SOUND_FILE);
+                    } else if (moves != null && moves.isCheck) {
+                        statusLabel.setText("Status: Check - " + getPlayerName() + " is in check.");
                     }
                 } catch (CloneNotSupportedException e_) {
                     // TODO Auto-generated catch block
                     e_.printStackTrace();
                 }
-                System.out.println("=========== "+getPlayerName()+"'s turn ============");
-            } 
+            }
             this.moves = null;
         } else {
             for (ChessPiece[] pieces2 : pieces) {
