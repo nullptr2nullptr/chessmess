@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener {
@@ -168,11 +167,13 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     continue;
                 }
                 try {
-                    PieceSelectedMoves moves = piece.calculateMoveset(colors, pieces, new ArrayList<>());
+                    PieceSelectedMoves moves = piece.calculateMoveset(colors, pieces, false);
                     if (this.moves == null) {
                         this.moves = moves;
                     }
-                    // Don't need to handle the various states
+                    if (moves != null && moves.isPinned) {
+                        System.out.println("INFO: "+ piece + " IS PINNED TO "+getPlayerName()+"'s KING.");
+                    }
                 } catch (CloneNotSupportedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -259,25 +260,23 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 ChessPiece tmp = this.activeKing;
                 this.activeKing = this.otherKing;
                 this.otherKing = tmp;
-                this.moves = null;
                 try {
                     System.out.println("DEBUG: active king is "+this.activeKing);
                     this.activeKing.drawDots();
-                    PieceSelectedMoves moves = this.activeKing.calculateMoveset(new HashMap<>(), pieces, new ArrayList<>());
+                    PieceSelectedMoves moves = this.activeKing.calculateMoveset(new HashMap<>(), pieces, false);
                     if (moves != null && moves.isMate) {
                         System.out.println("INFO: "+getPlayerName()+" GOT CHECKMATED.");
                     }
                     if (moves != null && moves.isCheck) {
                         System.out.println("INFO: "+getPlayerName()+" IS IN CHECK.");
                     }
-                    if (moves != null && moves.isPinned) {
-                        System.out.println("INFO: "+ piece + " IS PINNED TO "+getPlayerName()+"'s KING.");
-                    }
                 } catch (CloneNotSupportedException e_) {
                     // TODO Auto-generated catch block
                     e_.printStackTrace();
                 }
-            }
+                System.out.println("=========== "+getPlayerName()+"'s turn ============");
+            } 
+            this.moves = null;
         } else {
             for (ChessPiece[] pieces2 : pieces) {
                 for (ChessPiece p : pieces2) {
@@ -329,6 +328,8 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 pieces[i][j] = null;
             }
         }
+
+        this.moves = null;
 
         // Reinitialize pieces
         initializePieces();
