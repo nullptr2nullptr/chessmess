@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.LineUnavailableException;
@@ -25,7 +26,7 @@ import java.awt.Color;
 
 import static game.GameBoard.offset;
 
-public class ChessPiece {
+public class ChessPiece implements Cloneable {
     // Constants representing different move directions and types of chess pieces
     static int BASE = 0b1000000000000000000000000000000;
     static int UP = BASE;
@@ -74,6 +75,7 @@ public class ChessPiece {
     boolean isDrawingDots;
     boolean isInverted;
     public int moveCount;
+    boolean isKing;
 
     public ChessPiece(PieceType type, boolean isInverted, String iconPath, ChessPosition pos, int width, int height) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         this.type = type;
@@ -83,6 +85,7 @@ public class ChessPiece {
         this.height = height;
         this.isDrawingDots = false;
         this.isInverted = isInverted;
+        this.isKing = false;
 
         // Move sets
         switch (type) {
@@ -94,6 +97,7 @@ public class ChessPiece {
                 break;
             case KING:
                 this.moveSet = KING_MOVES;
+                this.isKing = true;
                 break;
             case QUEEN:
                 this.moveSet = QUEEN_MOVES;
@@ -120,7 +124,7 @@ public class ChessPiece {
         int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};
         int randomIndex = (int) (Math.random() * moveSets.length);
         this.moveSet = moveSets[randomIndex];
-        System.out.println("Move: " + randomIndex);
+        System.out.println("DEBUG: new move set is " + randomIndex);
         if (isInverted) {
             this.invertMoveSet();
         }
@@ -161,7 +165,8 @@ public class ChessPiece {
         g.drawImage(this.icon.getImage(), pos.x * GameBoard.PIECE_LENGTH, pos.y * GameBoard.PIECE_LENGTH + offset, width, height, p);
     }
 
-    public PieceSelectedMoves preparePaint(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces){
+    // The GLORIOUS FUNCTION
+    public PieceSelectedMoves calculateMoveset(HashMap<ChessPosition, Color> colors, ChessPiece[][] pieces, ArrayList<ChessPiece> avoidList) throws CloneNotSupportedException{
         ArrayList<int[]> positions = new ArrayList<>();
         ArrayList<int[]> thingsToTake = new ArrayList<>();
         Negator negate;
@@ -203,29 +208,37 @@ public class ChessPiece {
                 positions.add(new int[]{pos.x, pos.y + 2});
             }
             else if (this.moveSet == PAWN_MOVES && this.moveCount != 0) {
-                if (pieces[pos.y-1][pos.x] == null) {
+                if (pos.y > 0 && pieces[pos.y-1][pos.x] == null) {
                     positions.add(new int[]{pos.x, pos.y - 1});
                 }
             }
             else if (this.moveSet == PAWN_MOVES >> 16 && this.moveCount != 0) {
-                if (pieces[pos.y+1][pos.x+1] == null) {
+                if (pos.y+1 < 8 && pos.x+1 < 8 && pieces[pos.y+1][pos.x+1] == null) {
                     positions.add(new int[]{pos.x, pos.y + 1});
                 }
             }
             if (this.moveSet == PAWN_MOVES) {
-                if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
+                if (pos.x > 0) {
+                    if (pieces[pos.y-1][pos.x-1] != null && pieces[pos.y-1][pos.x-1].isInverted() != this.isInverted()) {
                     thingsToTake.add(new int[]{pos.x - 1, pos.y - 1});
+                    }
                 }
-                if (pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
-                    thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
+                if (pos.x < 7) {
+                    if (pieces[pos.y-1][pos.x+1] != null && pieces[pos.y-1][pos.x+1].isInverted() != this.isInverted()) {
+                        thingsToTake.add(new int[]{pos.x + 1, pos.y - 1});
+                    }
                 }
             }
             else if (this.moveSet == PAWN_MOVES >> 16) {
-                if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
-                    thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
+                if (pos.x > 0) {
+                    if (pieces[pos.y+1][pos.x-1] != null && pieces[pos.y+1][pos.x-1].isInverted() != this.isInverted()) {
+                        thingsToTake.add(new int[]{pos.x - 1, pos.y + 1});
+                    }
                 }
-                if (pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
-                    thingsToTake.add(new int[]{pos.x + 1, pos.y + 1});
+                if (pos.x < 7) {
+                    if (pieces[pos.y+1][pos.x+1] != null && pieces[pos.y+1][pos.x+1].isInverted() != this.isInverted()) {
+                        thingsToTake.add(new int[]{pos.x + 1, pos.y + 1});
+                    }
                 }
             }
         }
@@ -463,8 +476,8 @@ public class ChessPiece {
                 }
             }
         }
-        ArrayList<int[]> new_positions = new ArrayList<>();
-        ArrayList<int[]> new_thingsToTake = new ArrayList<>();
+        HashSet<int[]> new_positions = new HashSet<>();
+        HashSet<int[]> new_thingsToTake = new HashSet<>();
         for (int[] xy: positions) {
             if (xy[1] >= 8 || xy[1] < 0 || xy[0] >= 8 || xy[0] < 0) {
                 continue;
@@ -527,8 +540,236 @@ public class ChessPiece {
                 colors.put(new ChessPosition(xy[0], xy[1]), new Color(240, 155, 129));
             }
         }
+
+        boolean finalInCheck = false;
+        boolean finalInCheckmate = false;
+        boolean finalPinned = false;
+        String message = null;
+        // If WE are a king, then check if we are in check/checkmate.
+        if (isKing) {
+            // Calculate the attackers: the pieces whose TTT == us
+            ArrayList<ChessPiece> attackers = new ArrayList<>();
+            for (ChessPiece[] row: pieces) {
+                for (ChessPiece piece: row) {
+                    if (piece == null) {
+                        continue;
+                    }
+                    if (!piece.isKing && piece.isInverted() != this.isInverted()) {
+                        piece.isDrawingDots = true;
+                        PieceSelectedMoves moves = piece.calculateMoveset(new HashMap<>(), pieces, avoidList);
+                        piece.isDrawingDots = false;
+                        if (moves == null) {
+                            continue;
+                        }
+                        for (int[] pos: moves.thingsToTake) {
+                            if (pos[0] == this.pos.x && pos[1] == this.pos.y) {
+                                attackers.add(piece);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            HashSet<int[]> final_positions = new HashSet<>();
+            HashSet<int[]> final_takings = new HashSet<>();
+            colors.clear();
+            // Update our possible positions based on their attacking spots (if their positions == us)
+            for (int[] test_pos: new_positions) {
+                for (ChessPiece attacker: attackers) {
+                    attacker.isDrawingDots = true;
+                    PieceSelectedMoves moves = attacker.calculateMoveset(new HashMap<>(), pieces, avoidList);
+                    attacker.isDrawingDots = false;
+                    boolean being_attacked = false;
+                    for (int[] pos: moves.positions) {
+                        if (pos[0] == test_pos[0] && pos[1] == test_pos[1]) {
+                            being_attacked = true;
+                        }
+                    }
+                    if (!being_attacked) {
+                        colors.put(new ChessPosition(test_pos[0], test_pos[1]), new Color(175, 215, 250));
+                        final_positions.add(test_pos);
+                    }
+                }
+            }
+            // Update our possible positions or where we can take based on their attacking/defended spots
+            /// (if their TTT = us, after we take one of the pieces we can)
+            for (int[] test_pos: new_thingsToTake) {
+                for (ChessPiece attacker: attackers) {
+                    ChessPiece[][] pieces_copy = new ChessPiece[8][8];
+                    for (int r=0; r<8; r++){
+                        for (int c=0; c<8; c++) {
+                            if (pieces[r][c] == null) {
+                                continue;
+                            }
+                            pieces_copy[r][c] = (ChessPiece)(pieces[r][c].clone());
+                        }
+                    }
+                    pieces_copy[test_pos[1]][test_pos[0]] = pieces_copy[this.pos.y][this.pos.x];
+                    pieces_copy[test_pos[1]][test_pos[0]].pos = new ChessPosition(test_pos[0], test_pos[1]);
+                    
+                    // Would taking that keep us under attack?
+                    attacker.isDrawingDots = true;
+                    PieceSelectedMoves moves = attacker.calculateMoveset(new HashMap<>(), pieces_copy, avoidList);
+                    attacker.isDrawingDots = false;
+                    boolean being_attacked = false;
+                    for (int[] pos: moves.thingsToTake) {
+                        if (pos[0] == test_pos[0] && pos[1] == test_pos[1]) {
+                            being_attacked = true;
+                        }
+                    }
+                    // Would taking that bring us under attack by anything else?
+                    for (int r=0; r<8; r++){
+                        for (int c=0; c<8; c++) {
+                            // Only care about opponent's pieces
+                            if (pieces_copy[r][c] == null || pieces_copy[r][c].isInverted() == this.isInverted() || pieces_copy[r][c] == attacker) {
+                                continue;
+                            }
+                            pieces_copy[r][c].isDrawingDots = true;
+                            PieceSelectedMoves m = pieces_copy[r][c].calculateMoveset(new HashMap<>(), pieces_copy, avoidList);
+                            pieces_copy[r][c].isDrawingDots = false;
+                            for (int[] pos: m.thingsToTake) {
+                                if (pos[0] == test_pos[0] && pos[1] == test_pos[1]) {
+                                    being_attacked = true;
+                                }
+                            }
+                        }
+                    }
+                    if (!being_attacked) {
+                        colors.put(new ChessPosition(test_pos[0], test_pos[1]), new Color(240, 155, 129));
+                        final_takings.add(test_pos);
+                    }
+                }
+            }
+            if (!attackers.isEmpty()) {
+                finalInCheck = true;
+                message = "You are in check.";
+            }
+            // Make sure we're in checkmate
+            if (!attackers.isEmpty() && final_positions.isEmpty() && final_takings.isEmpty()) {
+                boolean inCheckmate = true;
+                for (ChessPiece[] row: pieces) {
+                    for (ChessPiece piece: row) {
+                        if (!inCheckmate) {
+                            break;
+                        }
+                        // Only care about our pieces
+                        if (piece == null || piece.isInverted() != this.isInverted() || piece == this) {
+                            continue;
+                        }
+
+                        piece.isDrawingDots = true;
+                        PieceSelectedMoves moves = piece.calculateMoveset(new HashMap<>(), pieces, avoidList);
+                        piece.isDrawingDots = false;
+                        if (moves == null) {
+                            continue;
+                        }
+                        for (int[] pos: moves.positions) {
+                            ChessPiece[][] pieces_copy = new ChessPiece[8][8];
+                            for (int r=0; r<8; r++){
+                                for (int c=0; c<8; c++) {
+                                    if (pieces[r][c] == null) {
+                                        continue;
+                                    }
+                                    pieces_copy[r][c] = (ChessPiece)(pieces[r][c].clone());
+                                }
+                            }
+                            // Move one of our pieces to that spot
+                            pieces_copy[pos[1]][pos[0]] = pieces_copy[piece.pos.y][piece.pos.x];
+                            pieces_copy[pos[1]][pos[0]].pos = new ChessPosition(pos[0], pos[1]);
+                            ArrayList<ChessPiece> still_attacking = new ArrayList<>();
+                            // Check if they are still attacking us
+                            for (ChessPiece[] r: pieces_copy) {
+                                for (ChessPiece p: r) {
+                                    if (p == null) {
+                                        continue;
+                                    }
+                                    if (!p.isKing && p.isInverted() != this.isInverted()) {
+                                        p.isDrawingDots = true;
+                                        PieceSelectedMoves still_attackers = p.calculateMoveset(new HashMap<>(), pieces_copy, avoidList);
+                                        p.isDrawingDots = false;
+                                        if (still_attackers == null) {
+                                            continue;
+                                        }
+                                        for (int[] pos2: still_attackers.thingsToTake) {
+                                            if (pos2[0] == this.pos.x && pos2[1] == this.pos.y) {
+                                                still_attacking.add(p);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (!still_attacking.isEmpty()) {
+                                inCheckmate = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (inCheckmate) {
+                    finalInCheckmate = true;
+                    message = "You are in checkmate";
+                }
+            }
+            new_positions = final_positions;
+            new_thingsToTake = final_takings;
+        } else { // We are not a king, so check if we are pinning the king and therefore have no moves
+            ArrayList<ChessPiece> attackers = new ArrayList<>();
+            ChessPiece ourKing = null;
+            
+            // Find our king
+            for (ChessPiece[] row: pieces) {
+                for (ChessPiece piece: row) {
+                    // Only care about opp. pieces, not king = optimization
+                    if (piece == null || piece.isInverted() != this.isInverted() || !piece.isKing) {
+                        continue;
+                    }
+                    ourKing = piece;
+                }
+            }
+            ChessPiece[][] pieces_copy = new ChessPiece[8][8];
+            for (int r=0; r<8; r++){
+                for (int c=0; c<8; c++) {
+                    if (pieces[r][c] == null) {
+                        continue;
+                    }
+                    pieces_copy[r][c] = (ChessPiece)(pieces[r][c].clone());
+                }
+            }
+            // Eliminate ourselves
+            pieces_copy[this.pos.y][this.pos.x] = null;
+
+            // Check for pieces who would are attacking
+            for (ChessPiece[] row: pieces_copy) {
+                for (ChessPiece piece: row) {
+                    if (piece == null || avoidList.contains(this)) {
+                        continue;
+                    }
+                    if (!piece.isKing && piece.isInverted() != this.isInverted()) {
+                        piece.isDrawingDots = true;
+                        avoidList.add(this); // avoid a recursion error
+                        PieceSelectedMoves moves = piece.calculateMoveset(new HashMap<>(), pieces_copy, avoidList);
+                        piece.isDrawingDots = false;
+                        if (moves == null) {
+                            continue;
+                        }
+                        for (int[] pos: moves.thingsToTake) {
+                            if (pos[0] == ourKing.pos.x && pos[1] == ourKing.pos.y) {
+                                attackers.add(piece);
+                            }
+                        }
+                    }
+                }
+            }
+            if (!attackers.isEmpty()) {
+                message = "You must move another piece because you are pinned";
+                new_positions.clear();
+                new_thingsToTake.clear();
+                colors.clear();
+                finalPinned = true;
+            }
+        }
         isDrawingDots = false;
-        return new PieceSelectedMoves(new_positions, new_thingsToTake, this);
+        return new PieceSelectedMoves(new_positions, new_thingsToTake, this, finalInCheck, finalInCheckmate, message, finalPinned);
     }
 
     public boolean isTouching(ChessPosition mouse_pos){
@@ -578,6 +819,10 @@ public class ChessPiece {
             v_y = -1 * v_y;
             y = height - this.height;
         }*/
+    }
+
+    public PieceType getType() {
+        return this.type;
     }
 
     interface Negator {

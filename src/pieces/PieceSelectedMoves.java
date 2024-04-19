@@ -1,15 +1,21 @@
 package pieces;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class PieceSelectedMoves {
-    public ArrayList<int[]> positions;
-    public ArrayList<int[]> thingsToTake;
+    public HashSet<int[]> positions;
+    public HashSet<int[]> thingsToTake;
     public ChessPiece piece;
-
-    public PieceSelectedMoves(ArrayList<int[]> positions, ArrayList<int[]> thingsToTake, ChessPiece piece) {
-        this.positions = positions;
-        this.thingsToTake = thingsToTake;
-        this.piece = piece;
+    public boolean isMate, isPinned, isCheck;
+    public String msg;
+ 
+    public PieceSelectedMoves(HashSet<int[]> positions, HashSet<int[]> thingsToTake, ChessPiece piece, boolean isCheck, boolean isMate, String message, boolean isPinned) {
+        this.positions=positions;
+        this.thingsToTake=thingsToTake;
+        this.piece=piece;
+        this.msg = message;
+        this.isMate = isMate;
+        this.isCheck = isCheck;
+        this.isPinned = isPinned;
     }
 }

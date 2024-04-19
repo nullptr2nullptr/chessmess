@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameBoard extends JPanel implements ActionListener, ItemListener, MouseListener, MouseMotionListener {
@@ -60,16 +61,16 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         addMostPiecesLeftToRight(new String[]{"src/res/image/Chess_rdt60.png",
                         "src/res/image/Chess_ndt60.png",
                         "src/res/image/Chess_bdt60.png",
-                        "src/res/image/Chess_kdt60.png",
                         "src/res/image/Chess_qdt60.png",
+                        "src/res/image/Chess_kdt60.png",
                         "src/res/image/Chess_bdt60.png",
                         "src/res/image/Chess_ndt60.png",
                         "src/res/image/Chess_rdt60.png"},
                 new PieceType[]{PieceType.ROOK,
                         PieceType.KNIGHT,
                         PieceType.BISHOP,
-                        PieceType.KING,
                         PieceType.QUEEN,
+                        PieceType.KING,
                         PieceType.BISHOP,
                         PieceType.KNIGHT,
                         PieceType.ROOK},
@@ -79,16 +80,16 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         addMostPiecesLeftToRight(new String[]{"src/res/image/Chess_rlt60.png",
                         "src/res/image/Chess_nlt60.png",
                         "src/res/image/Chess_blt60.png",
-                        "src/res/image/Chess_klt60.png",
                         "src/res/image/Chess_qlt60.png",
+                        "src/res/image/Chess_klt60.png",
                         "src/res/image/Chess_blt60.png",
                         "src/res/image/Chess_nlt60.png",
                         "src/res/image/Chess_rlt60.png"},
                 new PieceType[]{PieceType.ROOK,
                         PieceType.KNIGHT,
                         PieceType.BISHOP,
-                        PieceType.KING,
                         PieceType.QUEEN,
+                        PieceType.KING,
                         PieceType.BISHOP,
                         PieceType.KNIGHT,
                         PieceType.ROOK},
@@ -153,9 +154,24 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (piece == null) {
                     continue;
                 }
-                PieceSelectedMoves moves = piece.preparePaint(colors, pieces);
-                if (this.moves == null) {
-                    this.moves = moves;
+                try {
+                    PieceSelectedMoves moves = piece.calculateMoveset(colors, pieces, new ArrayList<>());
+                    if (this.moves == null) {
+                        this.moves = moves;
+                    }
+                    if (moves != null && moves.isMate) {
+                        System.out.println("INFO: YOU GOT CHECKMATED.");
+                        System.exit(0);
+                    }
+                    if (moves != null && moves.isCheck) {
+                        System.out.println("INFO: YOU ARE IN CHECK.");
+                    }
+                    if (moves != null && moves.isPinned) {
+                        System.out.println("INFO: "+ piece + " IS PINNED TO YOUR KING.");
+                    }
+                } catch (CloneNotSupportedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
             }
         }
@@ -219,7 +235,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (xy[0] == pos.x && xy[1] == pos.y) {
                     piece.moveCount++;
                     ChessPiece pieceAt = this.pieces[pos.y][pos.x];
-                    System.out.println(pieceAt);
+                    System.out.println("DEBUG: took "+ pieceAt);
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     ChessPiece.playSound(Sounds.LEGO_SOUND_FILE);
