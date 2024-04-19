@@ -1,7 +1,5 @@
 package pieces;
 
-import static game.GameBoard.offset;
-
 public class ChessPosition {
     public int x,y;
     // Top left is (0,0)

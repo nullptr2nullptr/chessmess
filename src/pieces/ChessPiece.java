@@ -749,9 +749,6 @@ public class ChessPiece implements Cloneable {
                         avoidList.add(this); // avoid a recursion error
                         PieceSelectedMoves moves = piece.calculateMoveset(new HashMap<>(), pieces_copy, avoidList);
                         piece.isDrawingDots = false;
-                        if (moves == null) {
-                            continue;
-                        }
                         for (int[] pos: moves.thingsToTake) {
                             if (pos[0] == ourKing.pos.x && pos[1] == ourKing.pos.y) {
                                 attackers.add(piece);
