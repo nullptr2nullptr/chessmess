@@ -391,6 +391,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
 
         // Set white to go first
         isWhiteTurn = true;
+        this.isDone = false;
 
         // Repaint panel
         repaint();
