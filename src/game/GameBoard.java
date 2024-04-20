@@ -304,6 +304,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     if (moves != null && moves.isMate) {
                         this.isWhiteTurn = !this.isWhiteTurn; // to get the correct winner
                         statusLabel.setText("" + getPlayerName() + " wins!");
+                        this.isWhiteTurn = true; // undo in case of rematch
                         ChessPiece.playSound(Sounds.TROMBONE_SOUND_FILE);
                         this.isDone = true;
                     } else if (moves != null && moves.isCheck) {
