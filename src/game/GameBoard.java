@@ -62,7 +62,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
         topPanel.add(score, gbc);
 
         // Status label
-        statusLabel = new JLabel("Status: Game Normal");
+        statusLabel = new JLabel("Game Normal");
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -296,16 +296,16 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 ChessPiece tmp = this.activeKing;
                 this.activeKing = this.otherKing;
                 this.otherKing = tmp;
-                statusLabel.setText("Status: Game Normal");
+                statusLabel.setText("Game Normal");
                 try {
                     System.out.println("DEBUG: active king is "+this.activeKing);
                     this.activeKing.drawDots();
                     PieceSelectedMoves moves = this.activeKing.calculateMoveset(new HashMap<>(), pieces, false);
                     if (moves != null && moves.isMate) {
-                        statusLabel.setText("Status: " + getPlayerName() + " wins!");
+                        statusLabel.setText("" + getPlayerName() + " wins!");
                         ChessPiece.playSound(Sounds.TROMBONE_SOUND_FILE);
                     } else if (moves != null && moves.isCheck) {
-                        statusLabel.setText("Status: " + getPlayerName() + " is in check");
+                        statusLabel.setText("" + getPlayerName() + " is in check");
                     }
                 } catch (CloneNotSupportedException e_) {
                     // TODO Auto-generated catch block
