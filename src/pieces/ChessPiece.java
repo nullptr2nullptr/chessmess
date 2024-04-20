@@ -133,8 +133,8 @@ public class ChessPiece implements Cloneable {
         }
     }
 
-    // Pawn promotion to Queen
-    public void tryPromoteToQueen() {
+    // Pawn promotion to Queen, true if promoted
+    public boolean tryPromoteToQueen() {
         if (this.isPromotable()) {
             this.moveSet = QUEEN_MOVES;
             if (isInverted) {
@@ -143,7 +143,9 @@ public class ChessPiece implements Cloneable {
             } else {
                 this.icon = new ImageIcon("src/res/image/Chess_qlt60.png");
             }
+            return true;
         }
+        return false;
     }
 
     public boolean isPromotable() {

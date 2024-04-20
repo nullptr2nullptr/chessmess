@@ -286,8 +286,15 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 }
             }
             if (didAMove) {
+                if (piece.tryPromoteToQueen()) {
+                    // -1 pawn, +9 queen
+                    if (isWhiteTurn) {
+                        whiteScore += 8; 
+                    } else {
+                        blackScore += 8; 
+                    }
+                }
                 isWhiteTurn = !isWhiteTurn; // Changing the turn once someone has moved.
-                piece.tryPromoteToQueen();
                 if(isWhiteTurn){
                     playerLabel.setText("Player: White");
                     // If we are on a white move, then we have completed a cycle. Now randomize everything.
