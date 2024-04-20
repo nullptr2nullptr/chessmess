@@ -203,7 +203,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                         this.moves = moves;
                     }
                     if (moves != null && moves.isPinned) {
-                        System.out.println("INFO: "+ piece + " IS PINNED TO "+getPlayerName()+"'s KING.");
+                        statusLabel.setText("Piece is pinned to " + getPlayerName() + "'s king.'");
                     }
                 } catch (CloneNotSupportedException e) {
                     // TODO Auto-generated catch block
@@ -278,7 +278,6 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     piece.pos = pos;
                     if (isWhiteTurn){
                         whiteScore += getScore(pieceAt);
-                        System.out.println(whiteScore);
                     } else{
                         blackScore += getScore(pieceAt);
                     }
