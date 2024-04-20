@@ -204,7 +204,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                         this.moves = moves;
                     }
                     if (moves != null && moves.isPinned) {
-                        statusLabel.setText("Piece is pinned to " + getPlayerName() + "'s king.'");
+                        statusLabel.setText("Piece is pinned to " + getPlayerName() + "'s king.");
                     }
                 } catch (CloneNotSupportedException e) {
                     // TODO Auto-generated catch block
