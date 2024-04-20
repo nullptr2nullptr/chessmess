@@ -272,7 +272,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                 if (xy[0] == pos.x && xy[1] == pos.y) {
                     piece.moveCount++;
                     ChessPiece pieceAt = this.pieces[pos.y][pos.x];
-                    System.out.println("DEBUG: took "+ pieceAt);
+                    // System.out.println("DEBUG: took "+ pieceAt);
                     this.pieces[piece.pos.y][piece.pos.x] = null;
                     this.pieces[pos.y][pos.x] = piece;
                     ChessPiece.playSound(Sounds.LEGO_SOUND_FILE);
@@ -287,18 +287,27 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
             }
             if (didAMove) {
                 isWhiteTurn = !isWhiteTurn; // Changing the turn once someone has moved.
+                piece.tryPromoteToQueen();
                 if(isWhiteTurn){
                     playerLabel.setText("Player: White");
+                    // If we are on a white move, then we have completed a cycle. Now randomize everything.
+                    for (int r=0; r<8; r++){
+                        for (int c=0; c<8; c++) {
+                            if (pieces[r][c] == null) {
+                                continue;
+                            }
+                            pieces[r][c].setRandomMoveSet();
+                        }
+                    }
                 } else {
                     playerLabel.setText("Player: Black");
                 }
-                piece.tryPromoteToQueen();
                 ChessPiece tmp = this.activeKing;
                 this.activeKing = this.otherKing;
                 this.otherKing = tmp;
                 statusLabel.setText("Game Normal");
                 try {
-                    System.out.println("DEBUG: active king is "+this.activeKing);
+                    // System.out.println("DEBUG: active king is "+this.activeKing);
                     this.activeKing.drawDots();
                     PieceSelectedMoves moves = this.activeKing.calculateMoveset(new HashMap<>(), pieces, false);
                     if (moves != null && moves.isMate) {

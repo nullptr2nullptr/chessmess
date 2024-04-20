@@ -119,12 +119,15 @@ public class ChessPiece implements Cloneable {
         return this.type;
     }
 
-    // Logic for random moves
+    // Logic for random moves, do not if we are a king
     public void setRandomMoveSet() {
+        if (this.isKing) {
+            return;
+        }
         int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};
         int randomIndex = (int) (Math.random() * moveSets.length);
         this.moveSet = moveSets[randomIndex];
-        System.out.println("DEBUG: new move set is " + randomIndex);
+        // System.out.println("DEBUG: new move set is " + randomIndex);
         if (isInverted) {
             this.invertMoveSet();
         }
