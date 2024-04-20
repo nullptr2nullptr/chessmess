@@ -33,6 +33,7 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     private ChessPiece otherKing;
     JLabel score = new JLabel("White: " + whiteScore + " - Black: " + blackScore);
     JLabel statusLabel, playerLabel;
+    boolean isDone = false;
 
     public GameBoard() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         setLayout(new BorderLayout());
@@ -301,8 +302,10 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
                     this.activeKing.drawDots();
                     PieceSelectedMoves moves = this.activeKing.calculateMoveset(new HashMap<>(), pieces, false);
                     if (moves != null && moves.isMate) {
+                        this.isWhiteTurn = !this.isWhiteTurn; // to get the correct winner
                         statusLabel.setText("" + getPlayerName() + " wins!");
                         ChessPiece.playSound(Sounds.TROMBONE_SOUND_FILE);
+                        this.isDone = true;
                     } else if (moves != null && moves.isCheck) {
                         statusLabel.setText("" + getPlayerName() + " is in check");
                     }
@@ -377,7 +380,9 @@ public class GameBoard extends JPanel implements ActionListener, ItemListener, M
     }
 
     private void handlePieceClick(ChessPiece p) {
-        p.drawDots();
+        if (!this.isDone) {
+            p.drawDots();
+        }
     }
 
     // Mouse Listener Other Functions
