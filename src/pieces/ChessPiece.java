@@ -717,7 +717,7 @@ public class ChessPiece implements Cloneable {
                 }
                 new_positions = final_positions;
                 new_thingsToTake = final_takings;
-            } else { // We are not a king, so check if we are pinning the king and therefore have no moves
+            } else { // We are not a king, so check if we are pinned to king, or can take that piece, or need to block
                 ChessPiece ourKing = null;
                 
                 // Find our king
@@ -818,7 +818,7 @@ public class ChessPiece implements Cloneable {
                     // Eliminate ourselves
                     pieces_copy[this.pos.y][this.pos.x] = null;
         
-                    // Check for pieces who would are attacking
+                    // Check for pieces who would be attacking
                     for (ChessPiece[] row: pieces_copy) {
                         for (ChessPiece piece: row) {
                             if (piece == null) {
@@ -836,7 +836,28 @@ public class ChessPiece implements Cloneable {
                             }
                         }
                     }
-                    if (!attackers.isEmpty()) {
+                    
+                    // Check if we can take the attacker
+                    PieceSelectedMoves moves = calculateMoveset(new HashMap<>(), pieces, true);
+                    HashSet<int[]> ttt = moves.thingsToTake;
+                    HashSet<int[]> final_ttt = new HashSet<>();
+                    HashMap<ChessPosition, Color> final_colors = new HashMap<>();
+                    for (int[] pos: ttt) {
+                        for (ChessPiece attacker: attackers) {
+                            if (attacker.pos.x == pos[0] && attacker.pos.y == pos[1]) {
+                                final_ttt.add(pos);
+                                final_colors.put(attacker.pos, new Color(240, 155, 129));
+                            }
+                        }
+                    }
+                    if (!final_ttt.isEmpty()) {
+                        new_positions.clear();
+                        new_thingsToTake.clear();
+                        new_thingsToTake.addAll(final_ttt);
+                        colors.clear();
+                        colors.putAll(final_colors);
+                    }
+                    else if (!attackers.isEmpty()) {
                         message = "You must move another piece because you are pinned";
                         new_positions.clear();
                         new_thingsToTake.clear();
