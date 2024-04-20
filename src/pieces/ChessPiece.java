@@ -124,7 +124,7 @@ public class ChessPiece implements Cloneable {
         if (this.isKing) {
             return;
         }
-        int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, KING_MOVES, BISHOP_MOVES, ROOK_MOVES};
+        int[] moveSets = {KNIGHT_MOVES, PAWN_MOVES, QUEEN_MOVES, BISHOP_MOVES, ROOK_MOVES};
         int randomIndex = (int) (Math.random() * moveSets.length);
         this.moveSet = moveSets[randomIndex];
         // System.out.println("DEBUG: new move set is " + randomIndex);
