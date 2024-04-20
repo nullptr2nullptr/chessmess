@@ -137,6 +137,7 @@ public class ChessPiece implements Cloneable {
     public boolean tryPromoteToQueen() {
         if (this.isPromotable()) {
             this.moveSet = QUEEN_MOVES;
+            this.type = PieceType.QUEEN;
             if (isInverted) {
                 this.icon = new ImageIcon("src/res/image/Chess_qdt60.png");
                 this.invertMoveSet();
